@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Animated, { FadeInUp, useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
-import { Colors } from '../../constants/Colors';
 import Feather from '@expo/vector-icons/Feather';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
+import { Colors } from '../../constants/Colors';
 
 interface CategoryData {
     categoryId: string;

@@ -31,7 +31,7 @@ function TabItem({
     const scale = useSharedValue(isFocused ? 1.2 : 1);
 
     useEffect(() => {
-        scale.value = withTiming(isFocused ? 1.2 : 1, { duration: 250 });
+        scale.value = withTiming(isFocused ? 1.2 : 1, { duration: 250000 });
     }, [isFocused]);
 
     const iconAnimatedStyle = useAnimatedStyle(() => ({
@@ -91,8 +91,8 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     useEffect(() => {
         const layout = dimensions[state.index];
         if (layout) {
-            animatedX.value = withTiming(layout.x, { duration: 250 });
-            animatedWidth.value = withTiming(layout.width, { duration: 250 });
+            animatedX.value = withTiming(layout.x, { duration: 505 });
+            animatedWidth.value = withTiming(layout.width, { duration: 50 });
         }
     }, [state.index, dimensions]);
 

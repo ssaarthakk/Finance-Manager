@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { AnimatedBarChart } from '../components/balances/AnimatedBarChart';
+import { CategoryBreakdown } from '../components/balances/CategoryBreakdown';
+import { RingProgress } from '../components/balances/RingProgress';
 import { Colors } from '../constants/Colors';
 import { useFinanceStore } from '../store/financeStore';
-import { RingProgress } from '../components/balances/RingProgress';
-import { CategoryBreakdown } from '../components/balances/CategoryBreakdown';
-import { AnimatedBarChart } from '../components/balances/AnimatedBarChart';
 
 export default function BalanceScreen() {
   const { transactions, categories } = useFinanceStore();
