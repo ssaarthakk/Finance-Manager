@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
 import { Controller } from 'react-hook-form';
-import { Input } from '../ui/Input';
+import { StyleSheet, View } from 'react-native';
 import { Button } from '../ui/Button';
+import { Input } from '../ui/Input';
 
 interface LoginFormProps {
     control: any;
@@ -52,8 +52,8 @@ export function LoginForm({ control, errors, onSubmit, isLoading }: LoginFormPro
                         value={value}
                         error={errors.password?.message as string}
                     // rightElement={
-                    //   <TouchableOpacity className="mt-4">
-                    //     <Text className="text-white text-[13px] text-right font-medium">Forgot password?</Text>
+                    //   <TouchableOpacity style={styles.forgotPasswordButton}>
+                    //     <Text style={styles.forgotPasswordText}>Forgot password?</Text>
                     //   </TouchableOpacity>
                     // }
                     />
@@ -64,3 +64,15 @@ export function LoginForm({ control, errors, onSubmit, isLoading }: LoginFormPro
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    forgotPasswordButton: {
+        marginTop: 16,
+    },
+    forgotPasswordText: {
+        color: 'white',
+        fontSize: 13,
+        textAlign: 'right',
+        fontWeight: '500',
+    }
+});

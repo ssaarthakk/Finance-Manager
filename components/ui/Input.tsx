@@ -1,35 +1,75 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 interface InputProps extends TextInputProps {
   label: string;
   error?: string;
   isPassword?: boolean;
   rightElement?: React.ReactNode;
+  containerStyle?: ViewStyle;
 }
 
-export function Input({ label, error, isPassword, rightElement, className = '', ...props }: InputProps) {
+export function Input({ label, error, isPassword, rightElement, containerStyle, ...props }: InputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
-    <View className={`mb-4 relative ${className}`}>
-      <Text className="text-[13px] font-medium text-white mb-2 ml-1">{label}</Text>
-      <View className={`flex-row items-center bg-[#141414] rounded-[14px] overflow-hidden ${isPassword ? 'pr-3' : ''}`}>
+    <View style={[styles.container, containerStyle]}>
+      <Text style={styles.label}>{label}</Text>
+      <View style={[styles.inputContainer, isPassword && styles.inputContainerPassword]}>
         <TextInput
-          className="flex-1 text-white px-4 py-3.5 outline-none"
+          style={styles.input}
           placeholderTextColor="#71717a"
           secureTextEntry={isPassword && !isPasswordVisible}
           {...props}
         />
         {isPassword && (
-          <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} className="p-1">
+          <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.iconButton}>
             <Ionicons name={isPasswordVisible ? "eye-outline" : "eye-off-outline"} size={20} color="#71717a" />
           </TouchableOpacity>
         )}
       </View>
-      {error && <Text className="text-red-400 text-xs mt-1 ml-1">{error}</Text>}
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
       {rightElement}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+    position: 'relative',
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: 'white',
+    marginBottom: 8,
+    marginLeft: 4,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#141414',
+    borderRadius: 14,
+    overflow: 'hidden',
+  },
+  inputContainerPassword: {
+    paddingRight: 12,
+  },
+  input: {
+    flex: 1,
+    color: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  iconButton: {
+    padding: 4,
+  },
+  errorText: {
+    color: '#f87171',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
+  }
+});

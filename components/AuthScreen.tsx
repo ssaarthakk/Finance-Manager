@@ -5,6 +5,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
+    StyleSheet,
     Text,
     View
 } from 'react-native';
@@ -66,19 +67,19 @@ export default function AuthScreen() {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            className="flex-1 bg-[#0e0e0e]"
+            style={styles.container}
         >
             <ScrollView 
-                contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 40 }} 
+                contentContainerStyle={styles.scrollContent} 
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
 
                 <AuthHeader />
 
-                <View className="bg-[#1c1c1c] p-6 rounded-3xl w-[90%] max-w-[400px]">
-                    <Text className="text-white text-2xl font-semibold mb-1">Get started</Text>
-                    <Text className="text-gray-400 text-[15px] mb-6">
+                <View style={styles.formContainer}>
+                    <Text style={styles.formTitle}>Get started</Text>
+                    <Text style={styles.formSubtitle}>
                         Sign in to your account or create a new one
                     </Text>
 
@@ -108,3 +109,34 @@ export default function AuthScreen() {
         </KeyboardAvoidingView>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#0e0e0e'
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 40
+    },
+    formContainer: {
+        backgroundColor: '#1c1c1c',
+        padding: 24, // p-6
+        borderRadius: 24, // rounded-3xl
+        width: '90%',
+        maxWidth: 400
+    },
+    formTitle: {
+        color: 'white',
+        fontSize: 24, // text-2xl
+        fontWeight: '600',
+        marginBottom: 4 // mb-1
+    },
+    formSubtitle: {
+        color: '#9ca3af', // text-gray-400
+        fontSize: 15,
+        marginBottom: 24 // mb-6
+    }
+});

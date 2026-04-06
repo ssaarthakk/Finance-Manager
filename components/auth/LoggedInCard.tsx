@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../ui/Button';
 
 interface LoggedInCardProps {
@@ -9,15 +9,15 @@ interface LoggedInCardProps {
 
 export function LoggedInCard({ email, onLogout }: LoggedInCardProps) {
   return (
-    <View className="flex-1 items-center justify-center bg-[#0e0e0e]">
-      <View className="bg-[#1c1c1c] p-8 rounded-3xl items-center w-[90%] max-w-[400px]">
-        <View className="w-16 h-16 bg-white rounded-[20px] items-center justify-center mb-6">
-          <Text className="text-black font-bold text-3xl">P</Text>
+    <View style={styles.container}>
+      <View style={styles.card}>
+        <View style={styles.logoContainer}>
+          <Text style={styles.logoText}>P</Text>
         </View>
-        <Text className="text-2xl font-bold mb-2 text-white text-center tracking-tight">
+        <Text style={styles.title}>
           Welcome to PayU
         </Text>
-        <Text className="text-gray-400 text-sm mb-6 text-center">
+        <Text style={styles.subtitle}>
           Logged in as: {email}
         </Text>
         
@@ -26,3 +26,48 @@ export function LoggedInCard({ email, onLogout }: LoggedInCardProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0e0e0e'
+  },
+  card: {
+    backgroundColor: '#1c1c1c',
+    padding: 32, // p-8
+    borderRadius: 24, // rounded-3xl
+    alignItems: 'center',
+    width: '90%',
+    maxWidth: 400
+  },
+  logoContainer: {
+    width: 64, // w-16
+    height: 64, // h-16
+    backgroundColor: 'white',
+    borderRadius: 20, // rounded-[20px]
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24 // mb-6
+  },
+  logoText: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 30 // text-3xl
+  },
+  title: {
+    fontSize: 24, // text-2xl
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: 'white',
+    textAlign: 'center',
+    letterSpacing: -0.5 // tracking-tight
+  },
+  subtitle: {
+    color: '#9ca3af', // text-gray-400
+    fontSize: 14, // text-sm
+    marginBottom: 24, // mb-6
+    textAlign: 'center'
+  }
+});

@@ -1,18 +1,54 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 export function AuthHeader() {
   return (
-    <View className="items-center mb-10 px-6 pt-10">
-      <View className="w-16 h-16 bg-white rounded-[20px] items-center justify-center mb-4">
-        <Text className="text-black font-bold text-3xl">P</Text>
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Text style={styles.logoText}>P</Text>
       </View>
-      <Text className="text-3xl font-bold mb-2 text-white text-center tracking-tight">
+      <Text style={styles.title}>
         Welcome to PayU
       </Text>
-      <Text className="text-gray-400 text-[15px] text-center">
+      <Text style={styles.subtitle}>
         Send money globally with the real exchange rate
       </Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    marginBottom: 40,
+    paddingHorizontal: 24,
+    paddingTop: 40,
+  },
+  logoContainer: {
+    width: 64,
+    height: 64,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  logoText: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 30,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: 'white',
+    textAlign: 'center',
+    letterSpacing: -0.5, // tracking-tight
+  },
+  subtitle: {
+    color: '#9ca3af', // text-gray-400
+    fontSize: 15,
+    textAlign: 'center',
+  }
+});

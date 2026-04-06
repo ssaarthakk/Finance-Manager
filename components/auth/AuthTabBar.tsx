@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface AuthTabBarProps {
   activeTab: 'signin' | 'signup';
@@ -8,19 +8,59 @@ interface AuthTabBarProps {
 
 export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
   return (
-    <View className="flex-row bg-[#2c2c2c] rounded-full p-1 mb-6">
+    <View style={styles.container}>
       <TouchableOpacity
-        className={`flex-1 items-center justify-center py-2.5 rounded-full ${activeTab === 'signin' ? 'bg-white shadow-sm' : ''}`}
+        style={[
+          styles.tab,
+          activeTab === 'signin' && styles.activeTab
+        ]}
         onPress={() => onTabChange('signin')}
       >
-        <Text className={`font-semibold ${activeTab === 'signin' ? 'text-black' : 'text-gray-400'}`}>Sign In</Text>
+        <Text style={[styles.tabText, activeTab === 'signin' ? styles.activeTabText : styles.inactiveTabText]}>Sign In</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        className={`flex-1 items-center justify-center py-2.5 rounded-full ${activeTab === 'signup' ? 'bg-white shadow-sm' : ''}`}
+        style={[
+          styles.tab,
+          activeTab === 'signup' && styles.activeTab
+        ]}
         onPress={() => onTabChange('signup')}
       >
-        <Text className={`font-semibold ${activeTab === 'signup' ? 'text-black' : 'text-gray-400'}`}>Sign Up</Text>
+        <Text style={[styles.tabText, activeTab === 'signup' ? styles.activeTabText : styles.inactiveTabText]}>Sign Up</Text>
       </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    backgroundColor: '#2c2c2c',
+    borderRadius: 9999, // rounded-full
+    padding: 4,
+    marginBottom: 24,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: 9999, // rounded-full
+  },
+  activeTab: {
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    elevation: 2,
+  },
+  tabText: {
+    fontWeight: '600',
+  },
+  activeTabText: {
+    color: 'black',
+  },
+  inactiveTabText: {
+    color: '#9ca3af', // text-gray-400
+  }
+});
