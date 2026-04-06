@@ -1,9 +1,6 @@
-import { Text, View } from "react-native";
+import React from 'react';
+import AuthScreen from '../components/AuthScreen';
 
 export default function Index() {
-  return (
-    <View className="flex-1 items-center justify-center bg-black">
-      <Text className="text-white">This works right?</Text>
-    </View>
-  );
+  return <AuthScreen />;
 }
