@@ -1,6 +1,7 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
+import { Colors } from '../../constants/Colors';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
     forgotPasswordText: {
-        color: 'white',
+        color: Colors.white,
         fontSize: 13,
         textAlign: 'right',
         fontWeight: '500',

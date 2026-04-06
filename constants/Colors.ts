@@ -1,0 +1,17 @@
+export const Colors = {
+  background: '#0e0e0e',
+  card: '#1c1c1c',
+  input: '#141414',
+  tabBar: '#2c2c2c',
+  text: 'white',
+  textMuted: '#9ca3af',
+  textInverted: 'black',
+  primary: 'white',
+  placeholder: '#71717a',
+  errorBg: 'rgba(127, 29, 29, 0.4)',
+  errorText: '#fca5a5',
+  errorInput: '#f87171',
+  shadow: '#000',
+  white: 'white',
+  black: 'black',
+};

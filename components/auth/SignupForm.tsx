@@ -1,8 +1,8 @@
 import React from 'react';
-import { View } from 'react-native';
 import { Controller } from 'react-hook-form';
-import { Input } from '../ui/Input';
+import { View } from 'react-native';
 import { Button } from '../ui/Button';
+import { Input } from '../ui/Input';
 
 interface SignupFormProps {
     control: any;
@@ -13,8 +13,6 @@ interface SignupFormProps {
 }
 
 export function SignupForm({ control, errors, watch, onSubmit, isLoading }: SignupFormProps) {
-    const passwordValue = watch('password');
-
     return (
         <View>
             <Controller
@@ -78,7 +76,7 @@ export function SignupForm({ control, errors, watch, onSubmit, isLoading }: Sign
                 control={control}
                 rules={{
                     required: 'Confirmed password is required',
-                    validate: val => val === passwordValue || 'Passwords do not match'
+                    validate: val => val === watch('password') || 'Passwords do not match'
                 }}
                 name="confirmPassword"
                 render={({ field: { onChange, onBlur, value } }) => (

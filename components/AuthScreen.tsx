@@ -12,6 +12,7 @@ import {
 
 import { useAuthStore } from '../store/authStore';
 
+import { Colors } from '../constants/Colors';
 import { AuthHeader } from './auth/AuthHeader';
 import { AuthTabBar } from './auth/AuthTabBar';
 import { LoggedInCard } from './auth/LoggedInCard';
@@ -113,7 +114,7 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0e0e0e'
+        backgroundColor: Colors.background
     },
     scrollContent: {
         flexGrow: 1,
@@ -122,20 +123,20 @@ const styles = StyleSheet.create({
         paddingVertical: 40
     },
     formContainer: {
-        backgroundColor: '#1c1c1c',
+        backgroundColor: Colors.card,
         padding: 24, // p-6
         borderRadius: 24, // rounded-3xl
         width: '90%',
         maxWidth: 400
     },
     formTitle: {
-        color: 'white',
+        color: Colors.white,
         fontSize: 24, // text-2xl
         fontWeight: '600',
         marginBottom: 4 // mb-1
     },
     formSubtitle: {
-        color: '#9ca3af', // text-gray-400
+        color: Colors.textMuted, // text-gray-400
         fontSize: 15,
         marginBottom: 24 // mb-6
     }
