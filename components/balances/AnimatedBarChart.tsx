@@ -8,6 +8,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Colors } from '../../constants/Colors';
 
+import { LinearGradient } from 'expo-linear-gradient';
+
 interface BarData {
     id: string;
     label: string;
@@ -50,10 +52,17 @@ const Bar = ({ item, maxValue, index }: { item: BarData, maxValue: number, index
                 <Animated.View 
                     style={[
                         styles.barFill, 
-                        { height: `${finalHeight}%` },
+                        { height: `${finalHeight}%`, overflow: 'hidden' },
                         animatedStyle
                     ]} 
-                />
+                >
+                    <LinearGradient
+                        colors={[Colors.chartPeach, Colors.chartMint]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                </Animated.View>
             </View>
             <Text style={styles.barLabel}>{item.label}</Text>
         </View>
@@ -104,17 +113,17 @@ const styles = StyleSheet.create({
     },
     barWrapper: {
         height: 110,
-        width: 12,
+        width: 24, // Increased width
         backgroundColor: '#333',
-        borderRadius: 6,
+        borderRadius: 12,
         justifyContent: 'flex-end',
         overflow: 'hidden', // Ensures scaled child stays contained
         marginBottom: 8,
     },
     barFill: {
         width: '100%',
-        backgroundColor: Colors.chartPeach || '#FFB067',
-        borderRadius: 6,
+        backgroundColor: 'transparent',
+        borderRadius: 12,
         // The scaling originates from the center by default in RN, 
         // to make it scale from bottom, we usually wrap it or translateY.
         // A simple height animation works better for bars in RN instead of scaleY

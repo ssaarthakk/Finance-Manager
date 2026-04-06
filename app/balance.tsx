@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnimatedBarChart } from '../components/balances/AnimatedBarChart';
-import { RingProgress } from '../components/balances/RingProgress';
+import { CategoryPieChart } from '../components/balances/CategoryPieChart';
 import { Colors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
@@ -12,7 +13,18 @@ export default function BalanceScreen() {
   const { currentUser } = useAuthStore();
   const { transactions: allTransactions, categories: allCategories } = useFinanceStore();
   
-  const transactions = allTransactions.filter(t => !t.userId || t.userId === currentUser?.email);
+  // Automatically filter to current month's transactions
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const transactions = allTransactions.filter(t => {
+    const d = new Date(t.date);
+    return (!t.userId || t.userId === currentUser?.email) &&
+           d.getMonth() === currentMonth &&
+           d.getFullYear() === currentYear;
+  });
+  
   const categories = allCategories.filter(c => !c.userId || c.userId === currentUser?.email);
 
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
@@ -40,10 +52,34 @@ export default function BalanceScreen() {
         categoryId: g.id,
         name: cat?.name || 'Unknown',
         amount: g.amount,
+        color: cat?.color || '#888',
       };
     }).sort((a, b) => b.amount - a.amount);
 
     return breakdown;
+  }, [transactions, categories]);
+
+  // Calculate highest income category
+  const incomeData = useMemo(() => {
+    const incomes = transactions.filter(t => t.type === 'income');
+    const grouped: Record<string, { amount: number, id: string }> = {};
+
+    incomes.forEach(t => {
+      if (!grouped[t.categoryId]) {
+        grouped[t.categoryId] = { amount: 0, id: t.categoryId };
+      }
+      grouped[t.categoryId].amount += t.amount;
+    });
+
+    return Object.values(grouped).map(g => {
+      const cat = categories.find(c => c.id === g.id);
+      return {
+        categoryId: g.id,
+        name: cat?.name || 'Unknown',
+        amount: g.amount,
+        color: cat?.color || '#888',
+      };
+    }).sort((a, b) => b.amount - a.amount);
   }, [transactions, categories]);
 
   // Make bar chart data exactly align to the last 7 days of total expenses
@@ -70,23 +106,24 @@ export default function BalanceScreen() {
   const highestExpenseName = expenseData[0]?.name || 'Nothing yet';
   
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Your Finances</Text>
-        <Text style={styles.subtitle}>Track your financial health</Text>
+        <Text style={styles.subtitle}>Monthly summary & insights</Text>
       </View>
       
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <RingProgress progress={spendingProgress} balance={balance} />
-
         <View style={styles.insightBox}>
           <Text style={styles.insightText}>
             <Text style={styles.insightBold}>{highestExpenseName}</Text> is your highest expense
           </Text>
         </View>
+
+        <CategoryPieChart title="Expenses by Category" data={expenseData} emptyText="No expenses tracked yet" />
+        <CategoryPieChart title="Income by Category" data={incomeData} emptyText="No income tracked yet" />
 
         <AnimatedBarChart data={chartData} maxValue={maxChartVal} />
         
