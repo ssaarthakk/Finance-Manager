@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet, Switch, Pressable } from 'react-native';
-import Animated, { FadeInDown, useSharedValue, withSpring } from 'react-native-reanimated';
 import Feather from '@expo/vector-icons/Feather';
+import React from 'react';
+import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import Animated, { FadeInDown, useSharedValue, withSpring } from 'react-native-reanimated';
 import { Colors } from '../../constants/Colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);

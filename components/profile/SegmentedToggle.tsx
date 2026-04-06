@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import Animated, { FadeInDown, interpolateColor, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { Colors } from '../../constants/Colors';
 
@@ -14,7 +14,7 @@ export function SegmentedToggle({ isEditMode, onToggle }: SegmentedToggleProps) 
     // Update shared value if prop changes (though standard practice would hook this all inside here,
     // we keep state lifted to parent to control inputs)
     React.useEffect(() => {
-        toggleX.value = withSpring(isEditMode ? 1 : 0, { damping: 15, stiffness: 120 });
+        toggleX.value = withSpring(isEditMode ? 1 : 0, { damping: 25, stiffness: 250, mass: 0.8 });
     }, [isEditMode]);
 
     const togglePillStyle = useAnimatedStyle(() => {

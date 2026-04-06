@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Colors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
 
-import { SegmentedToggle } from '../components/profile/SegmentedToggle';
-import { UserInfoCard } from '../components/profile/UserInfoCard';
 import { FinancialSummary } from '../components/profile/FinancialSummary';
+import { SegmentedToggle } from '../components/profile/SegmentedToggle';
 import { SettingsAndLogout } from '../components/profile/SettingsAndLogout';
+import { UserInfoCard } from '../components/profile/UserInfoCard';
 
 export default function ProfileScreen() {
   const { currentUser, logout } = useAuthStore();

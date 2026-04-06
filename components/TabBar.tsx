@@ -4,7 +4,7 @@ import { PlatformPressable } from '@react-navigation/elements';
 import { useLinkBuilder } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { LayoutRectangle, StyleSheet, View } from 'react-native';
-import Animated, { FadeIn, FadeOut, LinearTransition, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, LinearTransition, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 import { Colors } from '../constants/Colors';
 
@@ -31,7 +31,7 @@ function TabItem({
     const scale = useSharedValue(isFocused ? 1.2 : 1);
 
     useEffect(() => {
-        scale.value = withTiming(isFocused ? 1.2 : 1, { duration: 250000 });
+        scale.value = withSpring(isFocused ? 1.2 : 1, { damping: 15, stiffness: 200 });
     }, [isFocused]);
 
     const iconAnimatedStyle = useAnimatedStyle(() => ({
@@ -91,8 +91,8 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     useEffect(() => {
         const layout = dimensions[state.index];
         if (layout) {
-            animatedX.value = withTiming(layout.x, { duration: 505 });
-            animatedWidth.value = withTiming(layout.width, { duration: 50 });
+            animatedX.value = withSpring(layout.x, { damping: 25, stiffness: 250, mass: 0.8 });
+            animatedWidth.value = withSpring(layout.width, { damping: 25, stiffness: 250, mass: 0.8 });
         }
     }, [state.index, dimensions]);
 

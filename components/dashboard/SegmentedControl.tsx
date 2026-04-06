@@ -18,8 +18,8 @@ export function SegmentedControl({ options, selectedIndex, onChange }: Segmented
     useEffect(() => {
         const layout = dimensions[selectedIndex];
         if (layout) {
-            animatedX.value = withSpring(layout.x, { mass: 0.5, damping: 14 });
-            animatedWidth.value = withSpring(layout.width, { mass: 0.5, damping: 14 });
+            animatedX.value = withSpring(layout.x, { damping: 25, stiffness: 250, mass: 0.8 });
+            animatedWidth.value = withSpring(layout.width, { damping: 25, stiffness: 250, mass: 0.8 });
         }
     }, [selectedIndex, dimensions]);
 
