@@ -6,20 +6,11 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 
-import { useAuthStore } from '../store/authStore';
-
 import { Colors } from '../constants/Colors';
 import { AuthCard } from './auth/AuthCard';
 import { AuthHeader } from './auth/AuthHeader';
-import { LoggedInCard } from './auth/LoggedInCard';
 
 export default function AuthScreen() {
-    const { currentUser, logout } = useAuthStore();
-
-    if (currentUser) {
-        return <LoggedInCard email={currentUser.email} onLogout={logout} />;
-    }
-
     return (
         <KeyboardAwareScrollView
             style={styles.container}
