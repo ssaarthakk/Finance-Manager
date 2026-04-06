@@ -1,26 +1,25 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Button } from '../components/ui/Button';
 import { Colors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 
-export default function Dashboard() {
+export default function ProfileScreen() {
   const { currentUser, logout } = useAuthStore();
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Dashboard</Text>
+        <Text style={styles.headerTitle}>Profile</Text>
       </View>
-      
       <View style={styles.content}>
-        <Text style={styles.welcomeText}>
-          Welcome back to FlowFi, {currentUser?.name || currentUser?.email}!
-        </Text>
-        
-        <View style={styles.placeholderCard}>
-          <Text style={styles.placeholderTitle}>Total Balance</Text>
-          <Text style={styles.placeholderValue}>$0.00</Text>
+        <View style={styles.card}>
+          <Text style={styles.label}>Name</Text>
+          <Text style={styles.value}>{currentUser?.name || 'Not provided'}</Text>
+          <Text style={styles.label}>Email</Text>
+          <Text style={styles.value}>{currentUser?.email}</Text>
         </View>
+        <Button title="Sign Out" onPress={logout} />
       </View>
     </View>
   );
@@ -48,28 +47,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  welcomeText: {
-    color: Colors.textMuted,
-    fontSize: 16,
-    marginBottom: 32,
-    textAlign: 'center',
-  },
-  placeholderCard: {
+  card: {
     backgroundColor: Colors.card,
     width: '100%',
     padding: 24,
     borderRadius: 24,
-    alignItems: 'center',
     marginBottom: 32,
   },
-  placeholderTitle: {
+  label: {
     color: Colors.textMuted,
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 14,
+    marginBottom: 4,
   },
-  placeholderValue: {
+  value: {
     color: Colors.white,
-    fontSize: 40,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '500',
+    marginBottom: 16,
   }
 });

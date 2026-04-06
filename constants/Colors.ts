@@ -14,4 +14,7 @@ export const Colors = {
   shadow: '#000',
   white: 'white',
   black: 'black',
+
+  chartPeach: '#FED4B4',
+  chartMint: '#3BB9A1',
 };
