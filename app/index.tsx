@@ -40,20 +40,34 @@ const groupTransactionsByCategory = (transactions: Transaction[], categories: Ca
     }));
 };
 
+const filterTransactionsByTime = (transactions: Transaction[], filterIndex: number): Transaction[] => {
+    const now = new Date();
+    const cutoff = new Date();
+    if (filterIndex === 0) { // Weekly
+        cutoff.setDate(now.getDate() - 7);
+    } else { // Monthly
+        cutoff.setMonth(now.getMonth() - 1);
+    }
+    return transactions.filter(t => new Date(t.date) >= cutoff);
+};
+
 export default function Dashboard() {
     const { currentUser } = useAuthStore();
-    const { transactions, categories } = useFinanceStore();
+    const { transactions: allTransactions, categories: allCategories } = useFinanceStore();
     
     // UI states
     const [timeFilter, setTimeFilter] = useState(0);
     const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
     // Derived states
-    const income = getTotalIncome(transactions);
-    const expense = getTotalExpenses(transactions);
+    const transactions = allTransactions.filter(t => !t.userId || t.userId === currentUser?.email);
+    const categories = allCategories.filter(c => !c.userId || c.userId === currentUser?.email);
+    const filteredTransactions = filterTransactionsByTime(transactions, timeFilter);
+    const income = getTotalIncome(filteredTransactions);
+    const expense = getTotalExpenses(filteredTransactions);
     const balance = income - expense;
     
-    const expensesList = groupTransactionsByCategory(transactions, categories);
+    const expensesList = groupTransactionsByCategory(filteredTransactions, categories);
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>

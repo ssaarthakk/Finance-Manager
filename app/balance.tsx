@@ -1,19 +1,28 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { AnimatedBarChart } from '../components/balances/AnimatedBarChart';
-import { CategoryBreakdown } from '../components/balances/CategoryBreakdown';
 import { RingProgress } from '../components/balances/RingProgress';
 import { Colors } from '../constants/Colors';
+import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
 
 export default function BalanceScreen() {
-  const { transactions, categories } = useFinanceStore();
+  const { currentUser } = useAuthStore();
+  const { transactions: allTransactions, categories: allCategories } = useFinanceStore();
+  
+  const transactions = allTransactions.filter(t => !t.userId || t.userId === currentUser?.email);
+  const categories = allCategories.filter(c => !c.userId || c.userId === currentUser?.email);
 
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
   const balance = totalIncome - totalExpenses;
+  
+  // Real ring progress: How much of your income is spent?
+  const spendingProgress = totalIncome > 0 ? Math.min(totalExpenses / totalIncome, 1) : 0;
 
-  // Calculate highest expense category
+  // Calculate highest expense category for insight
   const expenseData = useMemo(() => {
     const expenses = transactions.filter(t => t.type === 'expense');
     const grouped: Record<string, { amount: number, id: string }> = {};
@@ -30,29 +39,35 @@ export default function BalanceScreen() {
       return {
         categoryId: g.id,
         name: cat?.name || 'Unknown',
-        color: cat?.color || '#888',
-        icon: cat?.icon || 'help-circle',
         amount: g.amount,
-        percentage: totalExpenses > 0 ? (g.amount / totalExpenses) * 100 : 0
       };
     }).sort((a, b) => b.amount - a.amount);
 
     return breakdown;
-  }, [transactions, categories, totalExpenses]);
+  }, [transactions, categories]);
 
-  // Mock bar chart data logic based on generic last days vs real
-  // Since we don't have complex Date objects indexed, we'll generate 
-  // dynamic mock shape from real totals distributed as a demo.
-  const chartData = [
-    { id: '1', label: 'Mon', value: totalExpenses * 0.15 },
-    { id: '2', label: 'Tue', value: totalExpenses * 0.25 },
-    { id: '3', label: 'Wed', value: totalExpenses * 0.1 },
-    { id: '4', label: 'Thu', value: totalExpenses * 0.3 },
-    { id: '5', label: 'Fri', value: totalExpenses * 0.2 },
-  ];
+  // Make bar chart data exactly align to the last 7 days of total expenses
+  const chartData = useMemo(() => {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const last7Days = Array.from({length: 7}).map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        return { date: d, dayLabel: days[d.getDay()] };
+    });
+
+    return last7Days.map(({ date, dayLabel }, i) => {
+        const dayStr = date.toISOString().split('T')[0];
+        // match transactions starting with this dayStr (e.g. '2026-04-06')
+        const val = transactions
+            .filter(t => t.type === 'expense' && t.date.startsWith(dayStr))
+            .reduce((sum, t) => sum + t.amount, 0);
+        return { id: dayStr, label: dayLabel, value: val };
+    });
+  }, [transactions]);
+
   const maxChartVal = Math.max(...chartData.map(d => d.value), 100);
 
-  const highestExpenseName = expenseData[0]?.name || 'Nothing';
+  const highestExpenseName = expenseData[0]?.name || 'Nothing yet';
   
   return (
     <SafeAreaView style={styles.container}>
@@ -65,7 +80,7 @@ export default function BalanceScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <RingProgress progress={0.6} balance={balance} />
+        <RingProgress progress={spendingProgress} balance={balance} />
 
         <View style={styles.insightBox}>
           <Text style={styles.insightText}>
@@ -75,7 +90,39 @@ export default function BalanceScreen() {
 
         <AnimatedBarChart data={chartData} maxValue={maxChartVal} />
         
-        <CategoryBreakdown data={expenseData} />
+        {/* Render individual transactions */}
+        <View style={styles.transactionsHeader}>
+            <Text style={styles.transactionsTitle}>Recent Transactions</Text>
+        </View>
+        
+        {transactions.length === 0 ? (
+            <Text style={styles.emptyText}>No recent transactions.</Text>
+        ) : (
+            transactions.slice().reverse().map((t, i) => {
+                const cat = categories.find(c => c.id === t.categoryId);
+                const isIncome = t.type === 'income';
+                return (
+                    <Animated.View
+                        key={t.id}
+                        entering={FadeInUp.delay(200 + i * 50).springify()}
+                        style={styles.transactionItem}
+                    >
+                        <View style={styles.itemLeft}>
+                            <View style={[styles.iconContainer, { backgroundColor: (cat?.color || '#888') + '20' }]}>
+                                <Ionicons name={(cat?.icon as any) || 'cube'} size={20} color={cat?.color || '#888'} />
+                            </View>
+                            <View>
+                                <Text style={styles.transactionName}>{cat?.name || 'Unknown'}</Text>
+                                <Text style={styles.transactionDate}>{new Date(t.date).toLocaleDateString()}</Text>
+                            </View>
+                        </View>
+                        <Text style={[styles.transactionAmount, { color: isIncome ? '#10B981' : Colors.white }]}>
+                            {isIncome ? '+' : '-'}₹{t.amount.toLocaleString('en-IN')}
+                        </Text>
+                    </Animated.View>
+                );
+            })
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -104,6 +151,55 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 20,
     paddingBottom: 40,
+  },
+  transactionsHeader: {
+    marginTop: 32,
+    marginBottom: 16,
+  },
+  transactionsTitle: {
+    color: Colors.white,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  emptyText: {
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+  transactionItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#1A1A1A',
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 12,
+  },
+  itemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  transactionName: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  transactionDate: {
+    color: '#888',
+    fontSize: 13,
+  },
+  transactionAmount: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   insightBox: {
     backgroundColor: '#1A1A1A',
