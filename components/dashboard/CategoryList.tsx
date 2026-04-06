@@ -1,4 +1,4 @@
-import Feather from '@expo/vector-icons/Feather';
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
@@ -36,7 +36,7 @@ export function CategoryList({ expenses }: CategoryListProps) {
                 >
                     <View style={styles.leftContent}>
                         <View style={[styles.iconContainer, { backgroundColor: expense.category.color + '20' }]}>
-                            <Feather name={expense.category.icon as any || 'box'} size={20} color={expense.category.color} />
+                            <Ionicons name={(expense.category.icon as any) || 'cube'} size={20} color={expense.category.color} />
                         </View>
                         <View>
                             <Text style={styles.categoryName}>{expense.category.name}</Text>

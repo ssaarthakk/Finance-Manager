@@ -1,10 +1,12 @@
 import Feather from '@expo/vector-icons/Feather';
 import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BalanceCard } from '../components/dashboard/BalanceCard';
 import { CategoryList, GroupedExpense } from '../components/dashboard/CategoryList';
 import { FloatingActionButton } from '../components/dashboard/FloatingActionButton';
 import { SegmentedControl } from '../components/dashboard/SegmentedControl';
+import { AddTransactionModal } from '../components/transaction/AddTransactionModal';
 import { Colors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
@@ -42,7 +44,9 @@ export default function Dashboard() {
     const { currentUser } = useAuthStore();
     const { transactions, categories } = useFinanceStore();
     
+    // UI states
     const [timeFilter, setTimeFilter] = useState(0);
+    const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
     // Derived states
     const income = getTotalIncome(transactions);
@@ -52,7 +56,7 @@ export default function Dashboard() {
     const expensesList = groupTransactionsByCategory(transactions, categories);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top']}>
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <View style={styles.logoCircle}>
@@ -89,7 +93,12 @@ export default function Dashboard() {
                 <CategoryList expenses={expensesList} />
             </ScrollView>
 
-            <FloatingActionButton onPress={() => console.log('Open Add Transaction')} />
+            <FloatingActionButton onPress={() => setIsAddModalVisible(true)} />
+            
+            <AddTransactionModal 
+                visible={isAddModalVisible} 
+                onClose={() => setIsAddModalVisible(false)} 
+            />
         </SafeAreaView>
     );
 }

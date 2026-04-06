@@ -1,9 +1,9 @@
 import { Tabs } from "expo-router";
+import { View } from "react-native";
 import AuthScreen from "../components/AuthScreen";
 import { TabBar } from "../components/TabBar";
-import { useAuthStore } from "../store/authStore";
 import { Colors } from "../constants/Colors";
-import { View } from "react-native";
+import { useAuthStore } from "../store/authStore";
 
 export default function RootLayout() {
   const { currentUser } = useAuthStore();

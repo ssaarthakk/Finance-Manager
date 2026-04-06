@@ -109,6 +109,13 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 
             {state.routes.map((route, index) => {
                 const { options } = descriptors[route.key];
+                
+                // Skip if explicitly hidden
+                // @ts-ignore: Expo Router options
+                if (options.href === null) {
+                    return null;
+                }
+
                 const label =
                     options.tabBarLabel !== undefined
                         ? options.tabBarLabel
