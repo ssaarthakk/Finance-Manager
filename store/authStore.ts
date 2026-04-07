@@ -11,6 +11,7 @@ interface AuthState {
     signUp: (name: string, email: string, password: string) => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
     logout: () => void;
+    updateProfile: (name: string, email: string) => void;
     getCurrentUser: () => AuthUser | null;
 }
 
@@ -63,6 +64,23 @@ export const useAuthStore = create<AuthState>()(
 
             logout: () => {
                 set({ currentUser: null });
+            },
+
+            updateProfile: (name: string, email: string) => {
+                const { currentUser, users } = get();
+                if (!currentUser) return;
+                
+                const updatedUsers = users.map((u) => {
+                    if (u.id === currentUser.id) {
+                        return { ...u, name, email };
+                    }
+                    return u;
+                });
+
+                set({
+                    users: updatedUsers,
+                    currentUser: { ...currentUser, name, email },
+                });
             },
 
             getCurrentUser: () => {

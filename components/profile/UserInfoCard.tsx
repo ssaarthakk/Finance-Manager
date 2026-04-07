@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Colors } from '../../constants/Colors';
 
@@ -9,9 +9,10 @@ interface UserInfoCardProps {
     email: string;
     onNameChange: (n: string) => void;
     onEmailChange: (e: string) => void;
+    onSave?: () => void;
 }
 
-export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailChange }: UserInfoCardProps) {
+export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailChange, onSave }: UserInfoCardProps) {
     return (
         <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.card}>
             <View style={styles.fieldSection}>
@@ -21,6 +22,8 @@ export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailCha
                         style={styles.input} 
                         value={name} 
                         onChangeText={onNameChange} 
+                        placeholder="Enter full name"
+                        autoCapitalize="words"
                         placeholderTextColor={Colors.textMuted}
                     />
                 ) : (
@@ -36,12 +39,21 @@ export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailCha
                         value={email} 
                         onChangeText={onEmailChange} 
                         keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        placeholder="Enter email address"
                         placeholderTextColor={Colors.textMuted}
                     />
                 ) : (
                     <Text style={styles.value}>{email}</Text>
                 )}
             </View>
+
+            {isEditMode && (
+                <Pressable style={styles.saveButton} onPress={onSave}>
+                    <Text style={styles.saveButtonText}>Save Details</Text>
+                </Pressable>
+            )}
         </Animated.View>
     );
 }
@@ -77,7 +89,25 @@ const styles = StyleSheet.create({
         color: Colors.white,
         fontSize: 16,
         fontWeight: '500',
-        padding: 0,
-        margin: 0,
+        backgroundColor: '#2A2A2A',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        marginTop: 4,
+        borderWidth: 1,
+        borderColor: '#3A3A3A',
     },
+    saveButton: {
+        backgroundColor: Colors.primary,
+        borderRadius: 12,
+        paddingVertical: 12,
+        alignItems: 'center',
+        marginTop: 12,
+        marginBottom: 8,
+    },
+    saveButtonText: {
+        color: Colors.black,
+        fontWeight: 'bold',
+        fontSize: 16,
+    }
 });

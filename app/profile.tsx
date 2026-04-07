@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Colors } from '../constants/Colors';
@@ -11,18 +11,39 @@ import { SettingsAndLogout } from '../components/profile/SettingsAndLogout';
 import { UserInfoCard } from '../components/profile/UserInfoCard';
 
 export default function ProfileScreen() {
-  const { currentUser, logout } = useAuthStore();
+  const { currentUser, logout, updateProfile } = useAuthStore();
   const { transactions } = useFinanceStore();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [name, setName] = useState(currentUser?.name || '');
   const [email, setEmail] = useState(currentUser?.email || '');
 
+  useEffect(() => {
+    if (currentUser && !isEditMode) {
+      setName(currentUser.name);
+      setEmail(currentUser.email);
+    }
+  }, [currentUser, isEditMode]);
+
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
   const balance = totalIncome - totalExpenses;
 
-  const userInitial = name ? name.charAt(0).toUpperCase() : 'U';
+  const handleToggleMode = (mode: boolean) => {
+    if (!mode && isEditMode) {
+      setName(currentUser?.name || '');
+      setEmail(currentUser?.email || '');
+    } else if (mode && !isEditMode) {
+      setName(currentUser?.name || '');
+      setEmail(currentUser?.email || '');
+    }
+    setIsEditMode(mode);
+  };
+
+  const handleSave = () => {
+    updateProfile(name, email);
+    setIsEditMode(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -30,15 +51,15 @@ export default function ProfileScreen() {
 
         <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{userInitial}</Text>
+            <Text style={styles.avatarText}>{currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}</Text>
           </View>
-          <Text style={styles.userName}>{name || 'User'}</Text>
-          <Text style={styles.userEmail}>{email}</Text>
+          <Text style={styles.userName}>{currentUser?.name || 'User'}</Text>
+          <Text style={styles.userEmail}>{currentUser?.email || ''}</Text>
         </Animated.View>
 
         <SegmentedToggle
           isEditMode={isEditMode}
-          onToggle={setIsEditMode}
+          onToggle={handleToggleMode}
         />
 
         <UserInfoCard
@@ -47,6 +68,7 @@ export default function ProfileScreen() {
           email={email}
           onNameChange={setName}
           onEmailChange={setEmail}
+          onSave={handleSave}
         />
 
         <FinancialSummary
