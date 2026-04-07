@@ -1,8 +1,8 @@
 import Feather from '@expo/vector-icons/Feather';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
-import Animated, { FadeInUp, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import Animated, { FadeInUp, useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { Colors, useThemeColors } from '../../constants/Colors';
 
 interface BalanceCardProps {
@@ -12,6 +12,7 @@ interface BalanceCardProps {
 }
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 function AnimatedNumber({ value, style }: { value: number; style: any }) {
     const animatedValue = useSharedValue(value);
@@ -37,9 +38,19 @@ function AnimatedNumber({ value, style }: { value: number; style: any }) {
 
 export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
     const themeColors = useThemeColors();
+    const scale = useSharedValue(1);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }]
+    }));
 
     return (
-        <Animated.View entering={FadeInUp.springify().mass(0.5).delay(100)} style={styles.container}>
+        <AnimatedPressable 
+            entering={FadeInUp.springify().mass(0.5).delay(100)} 
+            style={[styles.container, animatedStyle]}
+            onPressIn={() => scale.value = withSpring(0.96)}
+            onPressOut={() => scale.value = withSpring(1)}
+        >
             <LinearGradient
                 colors={[themeColors.chartPeach, themeColors.chartMint]}
                 start={{ x: 0, y: 0 }}
@@ -73,7 +84,7 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
                     </View>
                 </View>
             </LinearGradient>
-        </Animated.View>
+        </AnimatedPressable>
     );
 }
 

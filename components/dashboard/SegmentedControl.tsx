@@ -1,7 +1,9 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { LayoutRectangle, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useThemeColors } from '../../constants/Colors';
+import { useThemeStore } from '../../store/themeStore';
 
 interface SegmentedControlProps {
     options: string[];
@@ -38,7 +40,7 @@ function SegmentedButton({
             onPressOut={() => scale.value = withSpring(1)}
             onLayout={onLayout}
         >
-            <Text style={[styles.tabLabel, { color: isSelected ? themeColors.text : themeColors.textMuted }]}>
+            <Text style={[styles.tabLabel, { color: isSelected ? themeColors.background : themeColors.textMuted }]}>
                 {option}
             </Text>
         </AnimatedPressable>
@@ -46,6 +48,7 @@ function SegmentedButton({
 }
 
 export function SegmentedControl({ options, selectedIndex, onChange }: SegmentedControlProps) {
+    const { theme } = useThemeStore();
     const themeColors = useThemeColors();
     const [dimensions, setDimensions] = useState<{ [key: number]: LayoutRectangle }>({});
     
@@ -67,8 +70,14 @@ export function SegmentedControl({ options, selectedIndex, onChange }: Segmented
     }));
 
     return (
-        <View style={[styles.container, { backgroundColor: themeColors.input }]}>
-            <Animated.View style={[styles.activePill, activePillStyle, { backgroundColor: themeColors.background }]} />
+        <View style={[styles.container, { backgroundColor: themeColors.layer1 }]}>
+            <LinearGradient
+                colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']}
+                start={{ x: 0, y: 1 }}
+                end={{ x: 1, y: 0 }}
+                style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 20, borderWidth: 1, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)' }]}
+            />
+            <Animated.View style={[styles.activePill, activePillStyle, { backgroundColor: themeColors.text }]} />
 
             {options.map((option, index) => {
                 const isSelected = index === selectedIndex;
@@ -93,15 +102,16 @@ export function SegmentedControl({ options, selectedIndex, onChange }: Segmented
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        borderRadius: 16,
+        borderRadius: 20,
         padding: 4,
         marginBottom: 24,
+        position: 'relative',
     },
     activePill: {
         position: 'absolute',
         top: 4,
         bottom: 4,
-        borderRadius: 12,
+        borderRadius: 16,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
