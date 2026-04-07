@@ -3,17 +3,13 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Colors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
-import { useFinanceStore } from '../store/financeStore';
 
-import { FinancialSummary } from '../components/profile/FinancialSummary';
 import { SegmentedToggle } from '../components/profile/SegmentedToggle';
 import { SettingsAndLogout } from '../components/profile/SettingsAndLogout';
 import { UserInfoCard } from '../components/profile/UserInfoCard';
-import { EmptyState } from '../components/ui/EmptyState';
 
 export default function ProfileScreen() {
   const { currentUser, logout, updateProfile } = useAuthStore();
-  const { transactions } = useFinanceStore();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [name, setName] = useState(currentUser?.name || '');
@@ -25,10 +21,6 @@ export default function ProfileScreen() {
       setEmail(currentUser.email);
     }
   }, [currentUser, isEditMode]);
-
-  const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-  const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-  const balance = totalIncome - totalExpenses;
 
   const handleToggleMode = (mode: boolean) => {
     if (!mode && isEditMode) {
@@ -71,20 +63,6 @@ export default function ProfileScreen() {
           onEmailChange={setEmail}
           onSave={handleSave}
         />
-
-        {transactions.length === 0 ? (
-          <EmptyState
-            title="Start adding transactions"
-            subtitle="Start adding transactions to see your financial summary"
-            icon="server-outline"
-          />
-        ) : (
-          <FinancialSummary
-            income={totalIncome}
-            expenses={totalExpenses}
-            balance={balance}
-          />
-        )}
 
         <SettingsAndLogout
           onLogout={logout}
