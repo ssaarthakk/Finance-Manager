@@ -6,12 +6,13 @@ import { AnimatedBarChart } from '../components/balances/AnimatedBarChart';
 import { CategoryPieChart } from '../components/balances/CategoryPieChart';
 import { TransactionSwipeItem } from '../components/balances/TransactionSwipeItem';
 import { EmptyState } from '../components/ui/EmptyState';
-import { Colors } from '../constants/Colors';
+import { Colors, useThemeColors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
 
 export default function BalanceScreen() {
   const { currentUser } = useAuthStore();
+  const themeColors = useThemeColors();
   const { transactions: allTransactions, categories: allCategories, deleteTransaction, restoreTransaction } = useFinanceStore();
 
   const [deletedTx, setDeletedTx] = useState<any>(null);
@@ -117,10 +118,10 @@ export default function BalanceScreen() {
   const maxChartVal = Math.max(...chartData.map(d => d.value), 100);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Finances</Text>
-        <Text style={styles.subtitle}>Monthly summary & insights</Text>
+        <Text style={[styles.headerTitle, { color: themeColors.text }]}>Your Finances</Text>
+        <Text style={[styles.subtitle, { color: themeColors.textMuted }]}>Monthly summary & insights</Text>
       </View>
 
       <ScrollView
@@ -141,7 +142,7 @@ export default function BalanceScreen() {
             <AnimatedBarChart data={chartData} maxValue={maxChartVal} />
 
             <View style={styles.transactionsHeader}>
-              <Text style={styles.transactionsTitle}>Recent Transactions</Text>
+              <Text style={[styles.transactionsTitle, { color: themeColors.text }]}>Recent Transactions</Text>
             </View>
 
             {transactions.slice().reverse().map((t, i) => {

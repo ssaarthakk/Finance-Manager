@@ -9,7 +9,7 @@ import { NotificationModal } from '../components/dashboard/NotificationModal';
 import { SegmentedControl } from '../components/dashboard/SegmentedControl';
 import { AddTransactionModal } from '../components/transaction/AddTransactionModal';
 import { EmptyState } from '../components/ui/EmptyState';
-import { Colors } from '../constants/Colors';
+import { Colors, useThemeColors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
 import {
@@ -21,6 +21,7 @@ import {
 
 export default function Dashboard() {
     const { currentUser } = useAuthStore();
+    const themeColors = useThemeColors();
     const { transactions: allTransactions, categories: allCategories } = useFinanceStore();
     
     const [timeFilter, setTimeFilter] = useState(0);
@@ -37,19 +38,19 @@ export default function Dashboard() {
     const expensesList = groupTransactionsByCategory(filteredTransactions, categories);
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
-                    <View style={styles.logoCircle}>
-                        <Text style={styles.logoText}>F</Text>
+                    <View style={[styles.logoCircle, { backgroundColor: themeColors.primary }]}>
+                        <Text style={[styles.logoText, { color: themeColors.background }]}>F</Text>
                     </View>
-                    <Text style={styles.appName}>FlowFi</Text>
+                    <Text style={[styles.appName, { color: themeColors.text }]}>FlowFi</Text>
                 </View>
                 <Pressable 
                     style={styles.headerRight} 
                     onPress={() => setIsNotificationModalVisible(true)}
                 >
-                    <Feather name="bell" size={24} color={Colors.white} />
+                    <Feather name="bell" size={24} color={themeColors.text} />
                 </Pressable>
             </View>
 
@@ -58,8 +59,8 @@ export default function Dashboard() {
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.greetingSection}>
-                    <Text style={styles.greeting}>Hey, {currentUser?.name?.split(' ')[0] || 'there'}</Text>
-                    <Text style={styles.subtitle}>Track your expenses today</Text>
+                    <Text style={[styles.greeting, { color: themeColors.text }]}>Hey, {currentUser?.name?.split(' ')[0] || 'there'}</Text>
+                    <Text style={[styles.subtitle, { color: themeColors.textMuted }]}>Track your expenses today</Text>
                 </View>
 
                 <BalanceCard 
@@ -136,7 +137,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     appName: {
-        color: Colors.white,
         fontSize: 20,
         fontWeight: '600',
         letterSpacing: -0.5,
@@ -157,7 +157,6 @@ const styles = StyleSheet.create({
     greeting: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: Colors.white,
         marginBottom: 4,
     },
     subtitle: {

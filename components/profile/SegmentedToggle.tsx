@@ -2,7 +2,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import Animated, { FadeInDown, interpolateColor, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { Colors } from '../../constants/Colors';
+import { Colors, useThemeColors } from '../../constants/Colors';
+import { useThemeStore } from '../../store/themeStore';
 
 interface SegmentedToggleProps {
     isEditMode: boolean;
@@ -11,6 +12,8 @@ interface SegmentedToggleProps {
 
 export function SegmentedToggle({ isEditMode, onToggle }: SegmentedToggleProps) {
     const toggleX = useSharedValue(isEditMode ? 1 : 0);
+    const { theme } = useThemeStore();
+    const themeColors = useThemeColors();
 
     React.useEffect(() => {
         toggleX.value = withSpring(isEditMode ? 1 : 0, { damping: 25, stiffness: 250, mass: 0.8 });
@@ -23,27 +26,27 @@ export function SegmentedToggle({ isEditMode, onToggle }: SegmentedToggleProps) 
     });
 
     const previewTextStyle = useAnimatedStyle(() => ({
-        color: interpolateColor(toggleX.value, [0, 1], [Colors.black, Colors.textMuted])
+        color: interpolateColor(toggleX.value, [0, 1], [themeColors.background, themeColors.textMuted])
     }));
 
     const editTextStyle = useAnimatedStyle(() => ({
-        color: interpolateColor(toggleX.value, [0, 1], [Colors.textMuted, Colors.black])
+        color: interpolateColor(toggleX.value, [0, 1], [themeColors.textMuted, themeColors.background])
     }));
 
     return (
-        <Animated.View entering={FadeInDown.delay(200).springify()} style={[styles.toggleContainer, { backgroundColor: 'transparent' }]}>
+        <Animated.View entering={FadeInDown.delay(200).springify()} style={[styles.toggleContainer, { backgroundColor: themeColors.layer1 }]}>
             <LinearGradient
-                colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
+                colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']}
                 start={{ x: 0, y: 1 }}
                 end={{ x: 1, y: 0 }}
-                style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 30, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
+                style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 30, borderWidth: 1, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)' }]}
             />
-            <Animated.View style={[styles.togglePill, togglePillStyle]} />
+            <Animated.View style={[styles.togglePill, togglePillStyle, { backgroundColor: themeColors.text }]} />
             <Pressable style={styles.toggleButton} onPress={() => onToggle(false)}>
-                <Animated.Text style={[styles.toggleText, previewTextStyle]}>Preview</Animated.Text>
+                <Animated.Text style={[styles.toggleText, previewTextStyle, { color: isEditMode ? themeColors.textMuted : themeColors.background }]}>Preview</Animated.Text>
             </Pressable>
             <Pressable style={styles.toggleButton} onPress={() => onToggle(true)}>
-                <Animated.Text style={[styles.toggleText, editTextStyle]}>Edit</Animated.Text>
+                <Animated.Text style={[styles.toggleText, editTextStyle, { color: isEditMode ? themeColors.background : themeColors.textMuted }]}>Edit</Animated.Text>
             </Pressable>
         </Animated.View>
     );

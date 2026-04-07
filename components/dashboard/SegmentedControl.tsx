@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { LayoutRectangle, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { Colors } from '../../constants/Colors';
+import { useThemeColors } from '../../constants/Colors';
 
 interface SegmentedControlProps {
     options: string[];
@@ -10,6 +10,7 @@ interface SegmentedControlProps {
 }
 
 export function SegmentedControl({ options, selectedIndex, onChange }: SegmentedControlProps) {
+    const themeColors = useThemeColors();
     const [dimensions, setDimensions] = useState<{ [key: number]: LayoutRectangle }>({});
     
     const animatedX = useSharedValue(0);
@@ -30,8 +31,8 @@ export function SegmentedControl({ options, selectedIndex, onChange }: Segmented
     }));
 
     return (
-        <View style={styles.container}>
-            <Animated.View style={[styles.activePill, activePillStyle]} />
+        <View style={[styles.container, { backgroundColor: themeColors.input }]}>
+            <Animated.View style={[styles.activePill, activePillStyle, { backgroundColor: themeColors.background }]} />
 
             {options.map((option, index) => {
                 const isSelected = index === selectedIndex;
@@ -45,7 +46,7 @@ export function SegmentedControl({ options, selectedIndex, onChange }: Segmented
                             setDimensions(prev => ({ ...prev, [index]: newLayout }));
                         }}
                     >
-                        <Text style={[styles.tabLabel, { color: isSelected ? Colors.black : Colors.textMuted }]}>
+                        <Text style={[styles.tabLabel, { color: isSelected ? themeColors.text : themeColors.textMuted }]}>
                             {option}
                         </Text>
                     </Pressable>
@@ -58,7 +59,6 @@ export function SegmentedControl({ options, selectedIndex, onChange }: Segmented
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        backgroundColor: Colors.input,
         borderRadius: 16,
         padding: 4,
         marginBottom: 24,
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 4,
         bottom: 4,
-        backgroundColor: Colors.white,
         borderRadius: 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },

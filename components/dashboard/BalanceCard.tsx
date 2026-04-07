@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInUp, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
-import { Colors } from '../../constants/Colors';
+import { Colors, useThemeColors } from '../../constants/Colors';
 
 interface BalanceCardProps {
     balance: number;
@@ -36,37 +36,39 @@ function AnimatedNumber({ value, style }: { value: number; style: any }) {
 }
 
 export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
+    const themeColors = useThemeColors();
+
     return (
         <Animated.View entering={FadeInUp.springify().mass(0.5).delay(100)} style={styles.container}>
             <LinearGradient
-                colors={[Colors.chartPeach, Colors.chartMint]}
+                colors={[themeColors.chartPeach, themeColors.chartMint]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradient}
             >
                 <View style={styles.topSection}>
-                    <Text style={styles.label}>Total Balance</Text>
-                    <AnimatedNumber value={balance} style={styles.balance} />
+                    <Text style={[styles.label, { color: themeColors.background }]}>Total Balance</Text>
+                    <AnimatedNumber value={balance} style={[styles.balance, { color: themeColors.background }]} />
                 </View>
 
                 <View style={styles.bottomSection}>
                     <View style={styles.rowItem}>
-                        <View style={styles.iconContainer}>
-                            <Feather name="arrow-down-left" size={16} color={Colors.white} />
+                        <View style={[styles.iconContainer, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+                            <Feather name="arrow-down-left" size={16} color={themeColors.background} />
                         </View>
                         <View>
-                            <Text style={styles.subLabel}>Income</Text>
-                            <AnimatedNumber value={income} style={styles.subValue} />
+                            <Text style={[styles.subLabel, { color: themeColors.background }]}>Income</Text>
+                            <AnimatedNumber value={income} style={[styles.subValue, { color: themeColors.background }]} />
                         </View>
                     </View>
 
                     <View style={styles.rowItem}>
-                        <View style={styles.iconContainer}>
-                            <Feather name="arrow-up-right" size={16} color={Colors.white} />
+                        <View style={[styles.iconContainer, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+                            <Feather name="arrow-up-right" size={16} color={themeColors.background} />
                         </View>
                         <View>
-                            <Text style={styles.subLabel}>Expense</Text>
-                            <AnimatedNumber value={expense} style={styles.subValue} />
+                            <Text style={[styles.subLabel, { color: themeColors.background }]}>Expense</Text>
+                            <AnimatedNumber value={expense} style={[styles.subValue, { color: themeColors.background }]} />
                         </View>
                     </View>
                 </View>

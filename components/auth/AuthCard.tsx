@@ -5,13 +5,15 @@ import Animated, { FadeInUp, FadeOutUp, LinearTransition } from 'react-native-re
 
 import { useAuthStore } from '../../store/authStore';
 
-import { Colors } from '../../constants/Colors';
+import { useThemeColors } from '../../constants/Colors';
 import { Button } from '../ui/Button';
 import { ErrorBanner } from '../ui/ErrorBanner';
 import { Input } from '../ui/Input';
 import { AuthTabBar } from './AuthTabBar';
 
 export function AuthCard() {
+    const themeColors = useThemeColors();
+    const styles = getStyles(themeColors);
     const { login, signUp } = useAuthStore();
 
     const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
@@ -170,22 +172,22 @@ export function AuthCard() {
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet.create({
     formContainer: {
-        backgroundColor: Colors.card,
+        backgroundColor: themeColors.card,
         padding: 24,
         borderRadius: 24,
         width: '90%',
         maxWidth: 400
     },
     formTitle: {
-        color: Colors.white,
+        color: themeColors.text,
         fontSize: 24,
         fontWeight: '600',
         marginBottom: 4
     },
     formSubtitle: {
-        color: Colors.textMuted,
+        color: themeColors.textMuted,
         fontSize: 15,
         marginBottom: 24
     }

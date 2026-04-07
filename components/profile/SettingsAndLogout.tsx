@@ -3,7 +3,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import Animated, { FadeInDown, useSharedValue, withSpring } from 'react-native-reanimated';
-import { Colors } from '../../constants/Colors';
+import { Colors, useThemeColors } from '../../constants/Colors';
+import { useThemeStore } from '../../store/themeStore';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -13,32 +14,38 @@ interface SettingsAndLogoutProps {
 
 export function SettingsAndLogout({ onLogout }: SettingsAndLogoutProps) {
     const logoutScale = useSharedValue(1);
+    const { theme, toggleTheme } = useThemeStore();
+    const themeColors = useThemeColors();
 
     return (
         <>
             <Animated.View entering={FadeInDown.delay(500).springify()} style={styles.settingsSection}>
-                <Text style={styles.sectionTitle}>Settings</Text>
+                <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Settings</Text>
                 <View style={[styles.card, { backgroundColor: 'transparent' }]}>
                     <LinearGradient
-                      colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
+                      colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']}
                       start={{ x: 0, y: 1 }}
                       end={{ x: 1, y: 0 }}
-                      style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
+                      style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 20, borderWidth: 1, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)' }]}
                     />
                     <View style={styles.settingRow}>
                         <View style={styles.settingLeft}>
-                            <Feather name="moon" size={20} color={Colors.white} />
-                            <Text style={styles.settingText}>Dark Mode</Text>
+                            <Feather name="moon" size={20} color={themeColors.text} />
+                            <Text style={[styles.settingText, { color: themeColors.text }]}>Dark Mode</Text>
                         </View>
-                        <Switch value={true} trackColor={{ true: Colors.primary, false: '#555' }} />
+                        <Switch 
+                            value={theme === 'dark'} 
+                            onValueChange={toggleTheme} 
+                            trackColor={{ true: themeColors.primary, false: '#ccc' }} 
+                        />
                     </View>
-                    <View style={styles.separator} />
+                    <View style={[styles.separator, { backgroundColor: themeColors.layer1 }]} />
                     <View style={styles.settingRow}>
                         <View style={styles.settingLeft}>
-                            <Feather name="info" size={20} color={Colors.white} />
-                            <Text style={styles.settingText}>App Version</Text>
+                            <Feather name="info" size={20} color={themeColors.text} />
+                            <Text style={[styles.settingText, { color: themeColors.text }]}>App Version</Text>
                         </View>
-                        <Text style={styles.versionText}>1.0.0</Text>
+                        <Text style={[styles.versionText, { color: themeColors.textMuted }]}>1.0.0</Text>
                     </View>
                 </View>
             </Animated.View>

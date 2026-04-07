@@ -6,14 +6,15 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 
-import { Colors } from '../constants/Colors';
+import { useThemeColors } from '../constants/Colors';
 import { AuthCard } from './auth/AuthCard';
 import { AuthHeader } from './auth/AuthHeader';
 
 export default function AuthScreen() {
+    const themeColors = useThemeColors();
     return (
         <KeyboardAwareScrollView
-            style={styles.container}
+            style={[styles.container, { backgroundColor: themeColors.background }]}
             contentContainerStyle={styles.scrollContent}
             enableOnAndroid={true}
             extraHeight={Platform.OS === 'ios' ? 40 : 120}
@@ -30,8 +31,7 @@ export default function AuthScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: Colors.background
+        flex: 1
     },
     scrollContent: {
         flexGrow: 1,

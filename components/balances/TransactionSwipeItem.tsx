@@ -4,7 +4,8 @@ import React, { useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Animated, { FadeInUp } from 'react-native-reanimated';
-import { Colors } from '../../constants/Colors';
+import { useThemeColors } from '../../constants/Colors';
+import { useThemeStore } from '../../store/themeStore';
 import { Category } from '../../types/category';
 import { Transaction } from '../../types/transaction';
 
@@ -18,6 +19,8 @@ interface Props {
 export function TransactionSwipeItem({ transaction, category, index, onDelete }: Props) {
   const isIncome = transaction.type === 'income';
   const swipeableRef = useRef<any>(null);
+  const themeColors = useThemeColors();
+  const { theme } = useThemeStore();
 
   const renderLeftActions = () => {
     return (
@@ -50,23 +53,23 @@ export function TransactionSwipeItem({ transaction, category, index, onDelete }:
           }
         }}
       >
-        <View style={styles.transactionItem}>
+        <View style={[styles.transactionItem, { backgroundColor: themeColors.card }]}>
           <LinearGradient
-            colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
+            colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']}
             start={{ x: 0, y: 1 }}
             end={{ x: 1, y: 0 }}
-            style={[StyleSheet.absoluteFill, { borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
+            style={[StyleSheet.absoluteFill, { borderRadius: 16, borderWidth: 1, borderColor: themeColors.border }]}
           />
           <View style={styles.itemLeft}>
-            <View style={[styles.iconContainer, { backgroundColor: (category?.color || '#888') + '20' }]}>
-              <Ionicons name={(category?.icon as any) || 'cube'} size={20} color={category?.color || '#888'} />
+            <View style={[styles.iconContainer, { backgroundColor: (category?.color || themeColors.textMuted) + '20' }]}>
+              <Ionicons name={(category?.icon as any) || 'cube'} size={20} color={category?.color || themeColors.textMuted} />
             </View>
             <View>
-              <Text style={styles.transactionName}>{category?.name || 'Unknown'}</Text>
-              <Text style={styles.transactionDate}>{new Date(transaction.date).toLocaleDateString()}</Text>
+              <Text style={[styles.transactionName, { color: themeColors.text }]}>{category?.name || 'Unknown'}</Text>
+              <Text style={[styles.transactionDate, { color: themeColors.textMuted }]}>{new Date(transaction.date).toLocaleDateString()}</Text>
             </View>
           </View>
-          <Text style={[styles.transactionAmount, { color: isIncome ? '#00E880' : Colors.white }]}>
+          <Text style={[styles.transactionAmount, { color: isIncome ? '#00E880' : themeColors.text }]}>
             {isIncome ? '+' : '-'}₹{transaction.amount.toLocaleString('en-IN')}
           </Text>
         </View>
@@ -80,7 +83,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#0B0B0B',
     padding: 16,
     borderRadius: 16,
     marginBottom: 12,
@@ -98,13 +100,11 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   transactionName: {
-    color: Colors.white,
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
   },
   transactionDate: {
-    color: '#888',
     fontSize: 13,
   },
   transactionAmount: {

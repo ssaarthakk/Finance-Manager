@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Colors } from '../constants/Colors';
+import { Colors, useThemeColors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 
 import { SegmentedToggle } from '../components/profile/SegmentedToggle';
@@ -11,6 +11,7 @@ import { UserInfoCard } from '../components/profile/UserInfoCard';
 
 export default function ProfileScreen() {
   const { currentUser, logout, updateProfile } = useAuthStore();
+  const themeColors = useThemeColors();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [name, setName] = useState(currentUser?.name || '');
@@ -40,7 +41,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
       <KeyboardAwareScrollView 
         contentContainerStyle={styles.scrollContent} 
         showsVerticalScrollIndicator={false}
@@ -50,11 +51,11 @@ export default function ProfileScreen() {
       >
 
         <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}</Text>
+          <View style={[styles.avatar, { backgroundColor: themeColors.primary, shadowColor: themeColors.primary }]}>
+            <Text style={[styles.avatarText, { color: themeColors.background }]}>{currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}</Text>
           </View>
-          <Text style={styles.userName}>{currentUser?.name || 'User'}</Text>
-          <Text style={styles.userEmail}>{currentUser?.email || ''}</Text>
+          <Text style={[styles.userName, { color: themeColors.text }]}>{currentUser?.name || 'User'}</Text>
+          <Text style={[styles.userEmail, { color: themeColors.textMuted }]}>{currentUser?.email || ''}</Text>
         </Animated.View>
 
         <SegmentedToggle

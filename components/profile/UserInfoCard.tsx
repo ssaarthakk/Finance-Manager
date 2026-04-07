@@ -2,7 +2,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Colors } from '../../constants/Colors';
+import { Colors, useThemeColors } from '../../constants/Colors';
+import { useThemeStore } from '../../store/themeStore';
 
 interface UserInfoCardProps {
     isEditMode: boolean;
@@ -14,45 +15,48 @@ interface UserInfoCardProps {
 }
 
 export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailChange, onSave }: UserInfoCardProps) {
+    const { theme } = useThemeStore();
+    const themeColors = useThemeColors();
+
     return (
         <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.card}>
             <LinearGradient
-              colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
+              colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']}
               start={{ x: 0, y: 1 }}
               end={{ x: 1, y: 0 }}
-              style={[StyleSheet.absoluteFill, { borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
+              style={[StyleSheet.absoluteFill, { borderRadius: 20, borderWidth: 1, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)' }]}
             />
             <View style={styles.fieldSection}>
-                <Text style={styles.label}>Full Name</Text>
+                <Text style={[styles.label, { color: themeColors.textMuted }]}>Full Name</Text>
                 {isEditMode ? (
                     <TextInput 
-                        style={styles.input} 
+                        style={[styles.input, { color: themeColors.text, backgroundColor: theme === 'dark' ? '#222' : '#f3f4f6' }]} 
                         value={name} 
                         onChangeText={onNameChange} 
                         placeholder="Enter full name"
                         autoCapitalize="words"
-                        placeholderTextColor={Colors.textMuted}
+                        placeholderTextColor={themeColors.textMuted}
                     />
                 ) : (
-                    <Text style={styles.value}>{name || 'Not provided'}</Text>
+                    <Text style={[styles.value, { color: themeColors.text }]}>{name || 'Not provided'}</Text>
                 )}
             </View>
-            <View style={styles.separator} />
+            <View style={[styles.separator, { backgroundColor: themeColors.layer1 }]} />
             <View style={styles.fieldSection}>
-                <Text style={styles.label}>Email Address</Text>
+                <Text style={[styles.label, { color: themeColors.textMuted }]}>Email Address</Text>
                 {isEditMode ? (
                     <TextInput 
-                        style={styles.input} 
+                        style={[styles.input, { color: themeColors.text, backgroundColor: theme === 'dark' ? '#222' : '#f3f4f6' }]} 
                         value={email} 
                         onChangeText={onEmailChange} 
                         keyboardType="email-address"
                         autoCapitalize="none"
                         autoCorrect={false}
                         placeholder="Enter email address"
-                        placeholderTextColor={Colors.textMuted}
+                        placeholderTextColor={themeColors.textMuted}
                     />
                 ) : (
-                    <Text style={styles.value}>{email}</Text>
+                    <Text style={[styles.value, { color: themeColors.text }]}>{email}</Text>
                 )}
             </View>
 

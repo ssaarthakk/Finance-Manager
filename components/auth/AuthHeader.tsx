@@ -1,8 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../../constants/Colors';
+import { useThemeColors } from '../../constants/Colors';
 
 export function AuthHeader() {
+  const themeColors = useThemeColors();
+  const styles = getStyles(themeColors);
+
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -18,7 +21,7 @@ export function AuthHeader() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet.create({
   container: {
     alignItems: 'center',
     marginBottom: 40,
@@ -28,14 +31,14 @@ const styles = StyleSheet.create({
   logoContainer: {
     width: 64,
     height: 64,
-    backgroundColor: Colors.white,
+    backgroundColor: themeColors.white,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
   },
   logoText: {
-    color: Colors.black,
+    color: themeColors.black,
     fontWeight: 'bold',
     fontSize: 30,
   },
@@ -43,12 +46,12 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: Colors.white,
+    color: themeColors.text,
     textAlign: 'center',
     letterSpacing: -0.5, // tracking-tight
   },
   subtitle: {
-    color: Colors.textMuted, // text-gray-400
+    color: themeColors.textMuted, // text-gray-400
     fontSize: 15,
     textAlign: 'center',
   }
