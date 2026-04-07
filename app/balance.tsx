@@ -1,18 +1,41 @@
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeInUp } from 'react-native-reanimated';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnimatedBarChart } from '../components/balances/AnimatedBarChart';
 import { CategoryPieChart } from '../components/balances/CategoryPieChart';
+import { TransactionSwipeItem } from '../components/balances/TransactionSwipeItem';
 import { Colors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
 
 export default function BalanceScreen() {
   const { currentUser } = useAuthStore();
-  const { transactions: allTransactions, categories: allCategories } = useFinanceStore();
+  const { transactions: allTransactions, categories: allCategories, deleteTransaction, restoreTransaction } = useFinanceStore();
+
+  const [deletedTx, setDeletedTx] = useState<any>(null);
+
+  const handleDelete = (tx: any) => {
+    deleteTransaction(tx.id);
+    setDeletedTx(tx);
+  };
+
+  const handleUndo = () => {
+    if (deletedTx) {
+      restoreTransaction(deletedTx);
+      setDeletedTx(null);
+    }
+  };
+
+  useEffect(() => {
+    let timer: any;
+    if (deletedTx) {
+      timer = setTimeout(() => {
+        setDeletedTx(null);
+      }, 5000);
+    }
+    return () => clearTimeout(timer);
+  }, [deletedTx]);
 
   const now = new Date();
   const currentMonth = now.getMonth();
@@ -117,36 +140,32 @@ export default function BalanceScreen() {
         ) : (
           transactions.slice().reverse().map((t, i) => {
             const cat = categories.find(c => c.id === t.categoryId);
-            const isIncome = t.type === 'income';
             return (
-              <Animated.View
+              <TransactionSwipeItem
                 key={t.id}
-                entering={FadeInUp.delay(200 + i * 50).springify()}
-                style={styles.transactionItem}
-              >
-                <LinearGradient
-                  colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
-                  start={{ x: 0, y: 1 }}
-                  end={{ x: 1, y: 0 }}
-                  style={[StyleSheet.absoluteFill, { borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
-                />
-                <View style={styles.itemLeft}>
-                  <View style={[styles.iconContainer, { backgroundColor: (cat?.color || '#888') + '20' }]}>
-                    <Ionicons name={(cat?.icon as any) || 'cube'} size={20} color={cat?.color || '#888'} />
-                  </View>
-                  <View>
-                    <Text style={styles.transactionName}>{cat?.name || 'Unknown'}</Text>
-                    <Text style={styles.transactionDate}>{new Date(t.date).toLocaleDateString()}</Text>
-                  </View>
-                </View>
-                <Text style={[styles.transactionAmount, { color: isIncome ? '#00E880' : Colors.white }]}>
-                  {isIncome ? '+' : '-'}₹{t.amount.toLocaleString('en-IN')}
-                </Text>
-              </Animated.View>
+                transaction={t}
+                category={cat}
+                index={i}
+                onDelete={handleDelete}
+              />
             );
           })
         )}
       </ScrollView>
+
+      {/* Undo Toast */}
+      {deletedTx && (
+        <Animated.View 
+          entering={SlideInDown.springify()} 
+          exiting={SlideOutDown} 
+          style={styles.toastContainer}
+        >
+          <Text style={styles.toastText}>Transaction deleted</Text>
+          <Pressable onPress={handleUndo} style={styles.undoBtn}>
+            <Text style={styles.undoText}>Undo</Text>
+          </Pressable>
+        </Animated.View>
+      )}
     </SafeAreaView>
   );
 }
@@ -173,7 +192,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 160,
   },
   transactionsHeader: {
     marginTop: 32,
@@ -189,39 +208,35 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 16,
   },
-  transactionItem: {
+  toastContainer: {
+    position: 'absolute',
+    bottom: 100,
+    left: 20,
+    right: 20,
+    backgroundColor: '#333',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'transparent',
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6,
   },
-  itemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  toastText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '500',
   },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
+  undoBtn: {
+    padding: 8,
   },
-  transactionName: {
-    color: Colors.white,
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  transactionDate: {
-    color: '#888',
-    fontSize: 13,
-  },
-  transactionAmount: {
-    fontSize: 16,
+  undoText: {
+    color: Colors.chartMint,
     fontWeight: 'bold',
-  },
+    fontSize: 15,
+  }
 });

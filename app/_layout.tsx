@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AuthScreen from "../components/AuthScreen";
 import { TabBar } from "../components/TabBar";
 import { Colors } from "../constants/Colors";
@@ -10,14 +10,14 @@ export default function RootLayout() {
 
   if (!currentUser) {
     return (
-      <View style={{ flex: 1, backgroundColor: Colors.background }}>
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: Colors.background }}>
         <AuthScreen />
-      </View>
+      </GestureHandlerRootView>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.background }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: Colors.background }}>
       <Tabs 
         tabBar={props => <TabBar {...props} />}
         screenOptions={{ 
@@ -29,6 +29,6 @@ export default function RootLayout() {
         <Tabs.Screen name="balance" options={{ title: "Balance" }} />
         <Tabs.Screen name="profile" options={{ title: "Profile" }} />
       </Tabs>
-    </View>
+    </GestureHandlerRootView>
   );
 }

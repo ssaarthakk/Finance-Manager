@@ -42,6 +42,7 @@ interface FinanceState {
 
     addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
     deleteTransaction: (id: string) => void;
+    restoreTransaction: (transaction: Transaction) => void;
     addCategory: (category: Omit<Category, 'id'>) => void;
 
     clearState: () => void;
@@ -69,6 +70,15 @@ export const useFinanceStore = create<FinanceState>()(
             deleteTransaction: (id) => {
                 set((state) => ({
                     transactions: state.transactions.filter((t) => t.id !== id),
+                }));
+            },
+
+            restoreTransaction: (transaction) => {
+                set((state) => ({
+                    // insert it back so it's not totally lost or place it to the end.
+                    transactions: [...state.transactions, transaction].sort(
+                        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+                    ),
                 }));
             },
 
