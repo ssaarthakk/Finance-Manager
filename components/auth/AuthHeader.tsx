@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { useThemeColors } from '../../constants/Colors';
 
 export function AuthHeader() {
@@ -9,7 +9,10 @@ export function AuthHeader() {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Text style={styles.logoText}>F</Text>
+        <Image 
+          source={require('../../assets/images/Logo.png')} 
+          style={styles.logoImage} 
+        />
       </View>
       <Text style={styles.title}>
         Welcome to FlowFi
@@ -31,16 +34,17 @@ const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet
   logoContainer: {
     width: 64,
     height: 64,
-    backgroundColor: themeColors.primary,
-    borderRadius: 20,
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
+    borderRadius: 10,
   },
-  logoText: {
-    color: themeColors.background,
-    fontWeight: 'bold',
-    fontSize: 30,
+  logoImage: {
+    width: 64,
+    height: 64,
+    resizeMode: 'contain',
+    borderRadius: 10,
   },
   title: {
     fontSize: 30,
