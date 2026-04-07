@@ -15,7 +15,11 @@ export default function RootLayout() {
   if (!currentUser) {
     return (
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: themeColors.background }}>
-        <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+        <StatusBar 
+          style={theme === 'dark' ? 'light' : 'dark'} 
+          backgroundColor={themeColors.background}
+          translucent={false}
+        />
         <AuthScreen />
       </GestureHandlerRootView>
     );
@@ -23,7 +27,11 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: themeColors.background }}>
-      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar 
+        style={theme === 'dark' ? 'light' : 'dark'} 
+        backgroundColor={themeColors.background}
+        translucent={false}
+      />
       <Tabs 
         tabBar={props => <TabBar {...props} />}
         screenOptions={{ 

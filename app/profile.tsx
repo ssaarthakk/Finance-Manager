@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, useThemeColors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '../store/themeStore';
 
 import { SegmentedToggle } from '../components/profile/SegmentedToggle';
 import { SettingsAndLogout } from '../components/profile/SettingsAndLogout';
@@ -11,6 +13,7 @@ import { UserInfoCard } from '../components/profile/UserInfoCard';
 
 export default function ProfileScreen() {
   const { currentUser, logout, updateProfile } = useAuthStore();
+  const { theme } = useThemeStore();
   const themeColors = useThemeColors();
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -41,7 +44,8 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
+    <SafeAreaView edges={['top']} style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <View style={{ height: 20 }} />
       <KeyboardAwareScrollView 
         contentContainerStyle={styles.scrollContent} 
         showsVerticalScrollIndicator={false}

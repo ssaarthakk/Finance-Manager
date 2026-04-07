@@ -105,8 +105,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#2A2A2A',
     },
     logoutContainer: {
-        marginTop: 30, 
-        marginBottom: 50 
+        marginTop: 15, 
+        marginBottom: 100 
     },
     logoutButton: {
         flexDirection: 'row',

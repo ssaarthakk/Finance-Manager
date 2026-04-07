@@ -60,7 +60,7 @@ export const CategoryPieChart = ({ title, data, emptyText }: CategoryPieChartPro
             }}
             accessor="amount"
             backgroundColor="transparent"
-            paddingLeft="0"
+            paddingLeft="15"
             absolute
           />
         </View>
@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 10,
   },
-  chartContainer: {
+    chartContainer: {
     alignItems: 'center',
-    marginLeft: -10,
+    justifyContent: 'center',
   },
   emptyText: {
     color: '#888',

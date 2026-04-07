@@ -23,7 +23,7 @@ export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
   }, [activeTab, tabWidth, translateX]);
 
   const onLayout = (e: LayoutChangeEvent) => {
-    setTabWidth(e.nativeEvent.layout.width / 2);
+    setTabWidth((e.nativeEvent.layout.width - 8) / 2);
   };
 
   return (
