@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useThemeColors } from '../../constants/Colors';
 
 interface AuthTabBarProps {
@@ -7,20 +8,54 @@ interface AuthTabBarProps {
   onTabChange: (tab: 'signin' | 'signup') => void;
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+function AuthTabButton({ 
+  label, 
+  isActive, 
+  onPress, 
+  styles 
+}: { 
+  label: string, 
+  isActive: boolean, 
+  onPress: () => void,
+  styles: any
+}) {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
+  }));
+
+  return (
+    <AnimatedPressable
+      style={[styles.tab, animatedStyle]}
+      onPress={onPress}
+      onPressIn={() => scale.value = withSpring(0.95)}
+      onPressOut={() => scale.value = withSpring(1)}
+    >
+      <Text style={[styles.tabText, isActive ? styles.activeTabText : styles.inactiveTabText]}>{label}</Text>
+    </AnimatedPressable>
+  );
+}
+
 export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
   const [tabWidth, setTabWidth] = useState(0);
-  const translateX = useRef(new Animated.Value(0)).current;
+  const translateX = useSharedValue(0);
   const themeColors = useThemeColors();
   const styles = getStyles(themeColors);
 
   useEffect(() => {
-    Animated.spring(translateX, {
-      toValue: activeTab === 'signin' ? 0 : tabWidth,
-      useNativeDriver: true,
-      bounciness: 0,
-      speed: 20,
-    }).start();
-  }, [activeTab, tabWidth, translateX]);
+    translateX.value = withSpring(activeTab === 'signin' ? 0 : tabWidth, {
+      damping: 20,
+      stiffness: 200,
+      mass: 0.8
+    });
+  }, [activeTab, tabWidth]);
+
+  const indicatorStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }]
+  }));
 
   const onLayout = (e: LayoutChangeEvent) => {
     setTabWidth((e.nativeEvent.layout.width - 8) / 2);
@@ -31,24 +66,22 @@ export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
       <Animated.View
         style={[
           styles.activeBackground,
-          {
-            width: tabWidth,
-            transform: [{ translateX }],
-          },
+          indicatorStyle,
+          { width: tabWidth }
         ]}
       />
-      <TouchableOpacity
-        style={styles.tab}
+      <AuthTabButton
+        label="Sign In"
+        isActive={activeTab === 'signin'}
         onPress={() => onTabChange('signin')}
-      >
-        <Text style={[styles.tabText, activeTab === 'signin' ? styles.activeTabText : styles.inactiveTabText]}>Sign In</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.tab}
+        styles={styles}
+      />
+      <AuthTabButton
+        label="Sign Up"
+        isActive={activeTab === 'signup'}
         onPress={() => onTabChange('signup')}
-      >
-        <Text style={[styles.tabText, activeTab === 'signup' ? styles.activeTabText : styles.inactiveTabText]}>Sign Up</Text>
-      </TouchableOpacity>
+        styles={styles}
+      />
     </View>
   );
 }

@@ -23,35 +23,27 @@ export function SettingsAndLogout({ onLogout }: SettingsAndLogoutProps) {
                 <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Settings</Text>
                 <View style={[styles.card, { backgroundColor: 'transparent' }]}>
                     <LinearGradient
-                      colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']}
-                      start={{ x: 0, y: 1 }}
-                      end={{ x: 1, y: 0 }}
-                      style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 20, borderWidth: 1, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)' }]}
+                        colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']}
+                        start={{ x: 0, y: 1 }}
+                        end={{ x: 1, y: 0 }}
+                        style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 20, borderWidth: 1, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)' }]}
                     />
                     <View style={styles.settingRow}>
                         <View style={styles.settingLeft}>
                             <Feather name="moon" size={20} color={themeColors.text} />
                             <Text style={[styles.settingText, { color: themeColors.text }]}>Dark Mode</Text>
                         </View>
-                        <Switch 
-                            value={theme === 'dark'} 
-                            onValueChange={toggleTheme} 
-                            trackColor={{ true: themeColors.primary, false: '#ccc' }} 
+                        <Switch
+                            value={theme === 'dark'}
+                            onValueChange={toggleTheme}
+                            trackColor={{ true: themeColors.primary, false: '#ccc' }}
                         />
-                    </View>
-                    <View style={[styles.separator, { backgroundColor: themeColors.layer1 }]} />
-                    <View style={styles.settingRow}>
-                        <View style={styles.settingLeft}>
-                            <Feather name="info" size={20} color={themeColors.text} />
-                            <Text style={[styles.settingText, { color: themeColors.text }]}>App Version</Text>
-                        </View>
-                        <Text style={[styles.versionText, { color: themeColors.textMuted }]}>1.0.0</Text>
                     </View>
                 </View>
             </Animated.View>
 
             <Animated.View entering={FadeInDown.delay(600).springify()} style={styles.logoutContainer}>
-                <AnimatedPressable 
+                <AnimatedPressable
                     onPressIn={() => { logoutScale.value = withSpring(0.95); }}
                     onPressOut={() => { logoutScale.value = withSpring(1); }}
                     onPress={onLogout}
@@ -67,7 +59,7 @@ export function SettingsAndLogout({ onLogout }: SettingsAndLogoutProps) {
 
 const styles = StyleSheet.create({
     settingsSection: {
-        marginBottom: 10,
+        marginBottom: 0,
     },
     sectionTitle: {
         color: Colors.white,
@@ -85,7 +77,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingVertical: 16,
+        paddingVertical: 4,
     },
     settingLeft: {
         flexDirection: 'row',
@@ -105,8 +97,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#2A2A2A',
     },
     logoutContainer: {
-        marginTop: 15, 
-        marginBottom: 100 
+        marginBottom: 100
     },
     logoutButton: {
         flexDirection: 'row',

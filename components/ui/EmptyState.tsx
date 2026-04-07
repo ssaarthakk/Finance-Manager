@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInUp, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useThemeColors } from '../../constants/Colors';
 
 export interface EmptyStateProps {
@@ -11,6 +11,35 @@ export interface EmptyStateProps {
   emoji?: string;
   buttonText?: string;
   onPress?: () => void;
+}
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+function EmptyStateButton({
+  buttonText,
+  onPress,
+  themeColors
+}: {
+  buttonText: string;
+  onPress: () => void;
+  themeColors: any;
+}) {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
+  }));
+
+  return (
+    <AnimatedPressable 
+      style={[styles.button, { backgroundColor: themeColors.text }, animatedStyle]} 
+      onPress={onPress}
+      onPressIn={() => scale.value = withSpring(0.95)}
+      onPressOut={() => scale.value = withSpring(1)}
+    >
+      <Text style={[styles.buttonText, { color: themeColors.background }]}>{buttonText}</Text>
+    </AnimatedPressable>
+  );
 }
 
 export function EmptyState({ title, subtitle, icon, emoji, buttonText, onPress }: EmptyStateProps) {
@@ -28,9 +57,11 @@ export function EmptyState({ title, subtitle, icon, emoji, buttonText, onPress }
       <Text style={[styles.title, { color: themeColors.text }]}>{title}</Text>
       {subtitle && <Text style={[styles.subtitle, { color: themeColors.textMuted }]}>{subtitle}</Text>}
       {buttonText && onPress && (
-        <Pressable style={[styles.button, { backgroundColor: themeColors.text }]} onPress={onPress}>
-          <Text style={[styles.buttonText, { color: themeColors.background }]}>{buttonText}</Text>
-        </Pressable>
+        <EmptyStateButton 
+          buttonText={buttonText} 
+          onPress={onPress} 
+          themeColors={themeColors} 
+        />
       )}
     </Animated.View>
   );

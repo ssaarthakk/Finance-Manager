@@ -1,6 +1,7 @@
 import Feather from '@expo/vector-icons/Feather';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BalanceCard } from '../components/dashboard/BalanceCard';
 import { CategoryList } from '../components/dashboard/CategoryList';
@@ -18,6 +19,33 @@ import {
     getTotalIncome,
     groupTransactionsByCategory
 } from '../utils/financeHelpers';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+function NotificationButton({ 
+    themeColors, 
+    onPress 
+}: { 
+    themeColors: any; 
+    onPress: () => void 
+}) {
+    const scale = useSharedValue(1);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }]
+    }));
+
+    return (
+        <AnimatedPressable 
+            style={[styles.headerRight, animatedStyle]} 
+            onPress={onPress}
+            onPressIn={() => scale.value = withSpring(0.95)}
+            onPressOut={() => scale.value = withSpring(1)}
+        >
+            <Feather name="bell" size={24} color={themeColors.text} />
+        </AnimatedPressable>
+    );
+}
 
 export default function Dashboard() {
     const { currentUser } = useAuthStore();
@@ -46,12 +74,10 @@ export default function Dashboard() {
                     </View>
                     <Text style={[styles.appName, { color: themeColors.text }]}>FlowFi</Text>
                 </View>
-                <Pressable 
-                    style={styles.headerRight} 
-                    onPress={() => setIsNotificationModalVisible(true)}
-                >
-                    <Feather name="bell" size={24} color={themeColors.text} />
-                </Pressable>
+                <NotificationButton 
+                    themeColors={themeColors} 
+                    onPress={() => setIsNotificationModalVisible(true)} 
+                />
             </View>
 
             <ScrollView 

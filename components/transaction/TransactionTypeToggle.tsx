@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useThemeColors } from '../../constants/Colors';
 
 type TypeToggleProps = {
@@ -13,6 +13,37 @@ const SPRING_CONFIG = {
   stiffness: 250,
   mass: 0.8,
 };
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+function ToggleButton({ 
+  label, 
+  isActive, 
+  onPress, 
+  themeColors 
+}: { 
+  label: string, 
+  isActive: boolean, 
+  onPress: () => void,
+  themeColors: any
+}) {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
+  }));
+
+  return (
+    <AnimatedPressable 
+      style={[styles.button, animatedStyle]} 
+      onPress={onPress}
+      onPressIn={() => scale.value = withSpring(0.95)}
+      onPressOut={() => scale.value = withSpring(1)}
+    >
+      <Text style={[styles.text, { color: themeColors.textMuted }, isActive && styles.activeText]}>{label}</Text>
+    </AnimatedPressable>
+  );
+}
 
 export function TransactionTypeToggle({ type, onChange }: TypeToggleProps) {
   const isIncome = type === 'income';
@@ -33,19 +64,19 @@ export function TransactionTypeToggle({ type, onChange }: TypeToggleProps) {
     <View style={[styles.container, { backgroundColor: themeColors.card }]}>
       <Animated.View style={[styles.indicator, animatedStyle]} />
       
-      <Pressable 
-        style={styles.button} 
+      <ToggleButton 
+        label="Expense"
+        isActive={!isIncome}
         onPress={() => onChange('expense')}
-      >
-        <Text style={[styles.text, { color: themeColors.textMuted }, !isIncome && styles.activeText]}>Expense</Text>
-      </Pressable>
+        themeColors={themeColors}
+      />
       
-      <Pressable 
-        style={styles.button} 
+      <ToggleButton 
+        label="Income"
+        isActive={isIncome}
         onPress={() => onChange('income')}
-      >
-        <Text style={[styles.text, { color: themeColors.textMuted }, isIncome && styles.activeText]}>Income</Text>
-      </Pressable>
+        themeColors={themeColors}
+      />
     </View>
   );
 }

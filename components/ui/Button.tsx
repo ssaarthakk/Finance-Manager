@@ -1,5 +1,6 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TouchableOpacityProps } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useThemeColors } from '../../constants/Colors';
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -7,27 +8,46 @@ interface ButtonProps extends TouchableOpacityProps {
   isLoading?: boolean;
 }
 
-export function Button({ title, isLoading, style, ...props }: ButtonProps) {
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+export function Button({ title, isLoading, style, onPress, disabled, ...props }: ButtonProps) {
   const themeColors = useThemeColors();
   const styles = getStyles(themeColors);
 
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.95);
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1);
+  };
+
   return (
-    <TouchableOpacity 
+    <AnimatedPressable 
       style={[
         styles.button, 
         isLoading && styles.buttonLoading,
-        props.disabled && styles.buttonDisabled,
+        disabled && styles.buttonDisabled,
+        animatedStyle,
         style
       ]}
-      disabled={isLoading || props.disabled}
-      activeOpacity={0.8}
-      {...props}
+      disabled={isLoading || disabled}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={onPress}
+      {...props as any}
     >
       {isLoading ? (
         <ActivityIndicator color={themeColors.background} style={styles.loader} />
       ) : null}
       <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 }
 

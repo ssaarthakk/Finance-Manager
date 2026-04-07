@@ -13,7 +13,7 @@ import {
   View
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useThemeColors } from '../../constants/Colors';
@@ -23,6 +23,48 @@ import { useThemeStore } from '../../store/themeStore';
 import { TransactionTypeToggle } from './TransactionTypeToggle';
 
 import { EmptyState } from '../ui/EmptyState';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+function SubmitButton({ 
+  onPress, 
+  disabled, 
+  title, 
+  themeColors, 
+  isIncome 
+}: { 
+  onPress: () => void, 
+  disabled: boolean, 
+  title: string, 
+  themeColors: any,
+  isIncome: boolean
+}) {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
+  }));
+
+  return (
+    <AnimatedPressable 
+      onPress={onPress}
+      onPressIn={() => {
+        if (!disabled) scale.value = withSpring(0.95);
+      }}
+      onPressOut={() => scale.value = withSpring(1)}
+      disabled={disabled}
+      style={[
+        styles.submitButton, 
+        { backgroundColor: disabled ? themeColors.border : (isIncome ? '#10B981' : '#EF4444') },
+        animatedStyle
+      ]}
+    >
+      <Text style={styles.submitButtonText}>
+        {title}
+      </Text>
+    </AnimatedPressable>
+  );
+}
 
 type FormData = {
   type: 'expense' | 'income';
@@ -252,17 +294,13 @@ export function AddTransactionModal({ visible, onClose }: Props) {
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(500).springify()} style={styles.submitContainer}>
-            <Pressable 
-              style={[
-                styles.submitButton, 
-                { backgroundColor: transactionType === 'income' ? '#10B981' : '#EF4444' }
-              ]} 
+            <SubmitButton 
               onPress={handleSubmit(onSubmit)}
-            >
-              <Text style={styles.submitButtonText}>
-                Add {transactionType === 'income' ? 'Income' : 'Expense'}
-              </Text>
-            </Pressable>
+              disabled={false}
+              title={`Add ${transactionType === 'income' ? 'Income' : 'Expense'}`}
+              themeColors={themeColors}
+              isIncome={transactionType === 'income'}
+            />
           </Animated.View>
 
         </View>

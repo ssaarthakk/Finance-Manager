@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { Colors, useThemeColors } from '../../constants/Colors';
 import { useThemeStore } from '../../store/themeStore';
 
@@ -12,6 +12,27 @@ interface UserInfoCardProps {
     onNameChange: (n: string) => void;
     onEmailChange: (e: string) => void;
     onSave?: () => void;
+}
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+function SaveButton({ onSave }: { onSave?: () => void }) {
+    const scale = useSharedValue(1);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }]
+    }));
+
+    return (
+        <AnimatedPressable 
+            style={[styles.saveButton, animatedStyle]} 
+            onPress={onSave}
+            onPressIn={() => scale.value = withSpring(0.95)}
+            onPressOut={() => scale.value = withSpring(1)}
+        >
+            <Text style={styles.saveButtonText}>Save Details</Text>
+        </AnimatedPressable>
+    );
 }
 
 export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailChange, onSave }: UserInfoCardProps) {
@@ -61,9 +82,7 @@ export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailCha
             </View>
 
             {isEditMode && (
-                <Pressable style={styles.saveButton} onPress={onSave}>
-                    <Text style={styles.saveButtonText}>Save Details</Text>
-                </Pressable>
+                <SaveButton onSave={onSave} />
             )}
         </Animated.View>
     );

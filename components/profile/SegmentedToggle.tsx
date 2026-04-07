@@ -10,6 +10,41 @@ interface SegmentedToggleProps {
     onToggle: (mode: boolean) => void;
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+function SegmentedToggleButton({
+    label,
+    onPress,
+    textStyle,
+    isEditMode,
+    themeColors
+}: {
+    label: string,
+    onPress: () => void,
+    textStyle: any,
+    isEditMode: boolean,
+    themeColors: any
+}) {
+    const scale = useSharedValue(1);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }]
+    }));
+
+    return (
+        <AnimatedPressable 
+            style={[styles.toggleButton, animatedStyle]} 
+            onPress={onPress}
+            onPressIn={() => scale.value = withSpring(0.95)}
+            onPressOut={() => scale.value = withSpring(1)}
+        >
+            <Animated.Text style={[styles.toggleText, textStyle]}>
+                {label}
+            </Animated.Text>
+        </AnimatedPressable>
+    );
+}
+
 export function SegmentedToggle({ isEditMode, onToggle }: SegmentedToggleProps) {
     const toggleX = useSharedValue(isEditMode ? 1 : 0);
     const { theme } = useThemeStore();
@@ -26,11 +61,11 @@ export function SegmentedToggle({ isEditMode, onToggle }: SegmentedToggleProps) 
     });
 
     const previewTextStyle = useAnimatedStyle(() => ({
-        color: interpolateColor(toggleX.value, [0, 1], [themeColors.background, themeColors.textMuted])
+        color: interpolateColor(Math.max(0, Math.min(1, toggleX.value)), [0, 1], [themeColors.background as any, themeColors.textMuted as any])
     }));
 
     const editTextStyle = useAnimatedStyle(() => ({
-        color: interpolateColor(toggleX.value, [0, 1], [themeColors.textMuted, themeColors.background])
+        color: interpolateColor(Math.max(0, Math.min(1, toggleX.value)), [0, 1], [themeColors.textMuted as any, themeColors.background as any])
     }));
 
     return (
@@ -42,12 +77,20 @@ export function SegmentedToggle({ isEditMode, onToggle }: SegmentedToggleProps) 
                 style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 30, borderWidth: 1, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)' }]}
             />
             <Animated.View style={[styles.togglePill, togglePillStyle, { backgroundColor: themeColors.text }]} />
-            <Pressable style={styles.toggleButton} onPress={() => onToggle(false)}>
-                <Animated.Text style={[styles.toggleText, previewTextStyle, { color: isEditMode ? themeColors.textMuted : themeColors.background }]}>Preview</Animated.Text>
-            </Pressable>
-            <Pressable style={styles.toggleButton} onPress={() => onToggle(true)}>
-                <Animated.Text style={[styles.toggleText, editTextStyle, { color: isEditMode ? themeColors.background : themeColors.textMuted }]}>Edit</Animated.Text>
-            </Pressable>
+            <SegmentedToggleButton
+                label="Preview"
+                onPress={() => onToggle(false)}
+                textStyle={previewTextStyle}
+                isEditMode={isEditMode}
+                themeColors={themeColors}
+            />
+            <SegmentedToggleButton
+                label="Edit"
+                onPress={() => onToggle(true)}
+                textStyle={editTextStyle}
+                isEditMode={isEditMode}
+                themeColors={themeColors}
+            />
         </Animated.View>
     );
 }

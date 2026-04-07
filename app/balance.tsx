@@ -166,9 +166,9 @@ export default function BalanceScreen() {
         <Animated.View 
           entering={SlideInDown.springify()} 
           exiting={SlideOutDown} 
-          style={[styles.toastContainer, { backgroundColor: themeColors.text, shadowColor: themeColors.shadow }]}
+          style={[styles.toastContainer, { backgroundColor: themeColors.card, shadowColor: themeColors.shadow }]}
         >
-          <Text style={[styles.toastText, { color: themeColors.background }]}>Transaction deleted</Text>
+          <Text style={[styles.toastText, { color: themeColors.text }]}>Transaction deleted</Text>
           <Pressable onPress={handleUndo} style={styles.undoBtn}>
             <Text style={[styles.undoText, { color: themeColors.chartMint }]}>Undo</Text>
           </Pressable>

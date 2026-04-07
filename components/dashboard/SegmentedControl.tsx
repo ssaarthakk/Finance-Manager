@@ -9,6 +9,42 @@ interface SegmentedControlProps {
     onChange: (index: number) => void;
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+function SegmentedButton({
+    option,
+    isSelected,
+    onPress,
+    onLayout,
+    themeColors
+}: {
+    option: string;
+    isSelected: boolean;
+    onPress: () => void;
+    onLayout: (e: any) => void;
+    themeColors: any;
+}) {
+    const scale = useSharedValue(1);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }]
+    }));
+
+    return (
+        <AnimatedPressable
+            style={[styles.tabItem, animatedStyle]}
+            onPress={onPress}
+            onPressIn={() => scale.value = withSpring(0.95)}
+            onPressOut={() => scale.value = withSpring(1)}
+            onLayout={onLayout}
+        >
+            <Text style={[styles.tabLabel, { color: isSelected ? themeColors.text : themeColors.textMuted }]}>
+                {option}
+            </Text>
+        </AnimatedPressable>
+    );
+}
+
 export function SegmentedControl({ options, selectedIndex, onChange }: SegmentedControlProps) {
     const themeColors = useThemeColors();
     const [dimensions, setDimensions] = useState<{ [key: number]: LayoutRectangle }>({});
@@ -37,19 +73,17 @@ export function SegmentedControl({ options, selectedIndex, onChange }: Segmented
             {options.map((option, index) => {
                 const isSelected = index === selectedIndex;
                 return (
-                    <Pressable
+                    <SegmentedButton
                         key={option}
-                        style={styles.tabItem}
+                        option={option}
+                        isSelected={isSelected}
                         onPress={() => onChange(index)}
                         onLayout={(e) => {
                             const newLayout = e.nativeEvent.layout;
                             setDimensions(prev => ({ ...prev, [index]: newLayout }));
                         }}
-                    >
-                        <Text style={[styles.tabLabel, { color: isSelected ? themeColors.text : themeColors.textMuted }]}>
-                            {option}
-                        </Text>
-                    </Pressable>
+                        themeColors={themeColors}
+                    />
                 );
             })}
         </View>
