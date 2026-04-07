@@ -1,10 +1,11 @@
 import Feather from '@expo/vector-icons/Feather';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BalanceCard } from '../components/dashboard/BalanceCard';
 import { CategoryList } from '../components/dashboard/CategoryList';
 import { FloatingActionButton } from '../components/dashboard/FloatingActionButton';
+import { NotificationModal } from '../components/dashboard/NotificationModal';
 import { SegmentedControl } from '../components/dashboard/SegmentedControl';
 import { AddTransactionModal } from '../components/transaction/AddTransactionModal';
 import { Colors } from '../constants/Colors';
@@ -23,6 +24,7 @@ export default function Dashboard() {
     
     const [timeFilter, setTimeFilter] = useState(0);
     const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+    const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
 
     const transactions = allTransactions.filter(t => !t.userId || t.userId === currentUser?.email);
     const categories = allCategories.filter(c => !c.userId || c.userId === currentUser?.email);
@@ -42,9 +44,12 @@ export default function Dashboard() {
                     </View>
                     <Text style={styles.appName}>FlowFi</Text>
                 </View>
-                <View style={styles.headerRight}>
+                <Pressable 
+                    style={styles.headerRight} 
+                    onPress={() => setIsNotificationModalVisible(true)}
+                >
                     <Feather name="bell" size={24} color={Colors.white} />
-                </View>
+                </Pressable>
             </View>
 
             <ScrollView 
@@ -76,6 +81,11 @@ export default function Dashboard() {
             <AddTransactionModal 
                 visible={isAddModalVisible} 
                 onClose={() => setIsAddModalVisible(false)} 
+            />
+
+            <NotificationModal
+                visible={isNotificationModalVisible}
+                onClose={() => setIsNotificationModalVisible(false)}
             />
         </SafeAreaView>
     );
