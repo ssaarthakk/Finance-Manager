@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect } from 'react';
@@ -14,12 +15,17 @@ interface BalanceCardProps {
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-function AnimatedNumber({ value, style }: { value: number; style: any }) {
+function AnimatedNumber({ value, style, isFocused }: { value: number; style: any; isFocused: boolean }) {
     const animatedValue = useSharedValue(value);
 
     useEffect(() => {
-        animatedValue.value = withTiming(value, { duration: 700 });
-    }, [animatedValue, value]);
+        if (isFocused) {
+            animatedValue.value = 0;
+            animatedValue.value = withTiming(value, { duration: 700 });
+        } else {
+            animatedValue.value = value;
+        }
+    }, [animatedValue, value, isFocused]);
 
     const animatedProps = useAnimatedProps(() => ({
         text: `₹${Math.round(animatedValue.value).toLocaleString('en-IN')}`,
@@ -39,6 +45,7 @@ function AnimatedNumber({ value, style }: { value: number; style: any }) {
 export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
     const themeColors = useThemeColors();
     const scale = useSharedValue(1);
+    const isFocused = useIsFocused();
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scale.value }]
@@ -46,7 +53,8 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
 
     return (
         <AnimatedPressable 
-            entering={FadeInUp.springify().mass(0.5).delay(100)} 
+            key={isFocused ? 'focused' : 'unfocused'}
+            entering={isFocused ? FadeInUp.springify().mass(0.5).delay(100) : undefined} 
             style={[styles.container, animatedStyle]}
             onPressIn={() => scale.value = withSpring(0.96)}
             onPressOut={() => scale.value = withSpring(1)}
@@ -59,7 +67,7 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
             >
                 <View style={styles.topSection}>
                     <Text style={[styles.label, { color: themeColors.background }]}>Total Balance</Text>
-                    <AnimatedNumber value={balance} style={[styles.balance, { color: themeColors.background }]} />
+                    <AnimatedNumber value={balance} style={[styles.balance, { color: themeColors.background }]} isFocused={isFocused} />
                 </View>
 
                 <View style={styles.bottomSection}>
@@ -69,7 +77,7 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
                         </View>
                         <View>
                             <Text style={[styles.subLabel, { color: themeColors.background }]}>Income</Text>
-                            <AnimatedNumber value={income} style={[styles.subValue, { color: themeColors.background }]} />
+                            <AnimatedNumber value={income} style={[styles.subValue, { color: themeColors.background }]} isFocused={isFocused} />
                         </View>
                     </View>
 
@@ -79,7 +87,7 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
                         </View>
                         <View>
                             <Text style={[styles.subLabel, { color: themeColors.background }]}>Expense</Text>
-                            <AnimatedNumber value={expense} style={[styles.subValue, { color: themeColors.background }]} />
+                            <AnimatedNumber value={expense} style={[styles.subValue, { color: themeColors.background }]} isFocused={isFocused} />
                         </View>
                     </View>
                 </View>

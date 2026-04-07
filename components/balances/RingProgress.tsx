@@ -18,9 +18,11 @@ export const RingProgress = ({ balance, progress }: RingProgressProps) => {
     // To do an actual semi-circle we'd use SVG, but standard views clipped via border width/radius looks amazing too.
 
     const innerScale = useSharedValue(0.5);
+    const rotation = useSharedValue(-135);
 
     useEffect(() => {
         innerScale.value = withSpring(1, { damping: 12, stiffness: 90 });
+        rotation.value = withSpring(-45, { damping: 15, stiffness: 60 });
     }, []);
 
     const animatedInnerStyle = useAnimatedStyle(() => {
@@ -29,10 +31,16 @@ export const RingProgress = ({ balance, progress }: RingProgressProps) => {
         };
     });
 
+    const animatedRingStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ rotate: `${rotation.value}deg` }]
+        };
+    });
+
     return (
         <Animated.View entering={FadeIn.duration(800)} style={styles.container}>
             <View style={styles.outerRing}>
-                <View style={styles.progressRingIndicator} />
+                <Animated.View style={[styles.progressRingIndicator, animatedRingStyle]} />
                 <Animated.View style={[styles.innerCircle, animatedInnerStyle]}>
                     <Text style={styles.label}>Current Balance</Text>
                     <Text style={styles.balanceText}>₹{balance.toLocaleString('en-IN')}</Text>
@@ -67,7 +75,6 @@ const styles = StyleSheet.create({
         borderColor: Colors.chartMint || '#A8E6CF',
         borderTopColor: 'transparent',
         borderRightColor: 'transparent',
-        transform: [{ rotate: '-45deg' }],
     },
     innerCircle: {
         width: 160,

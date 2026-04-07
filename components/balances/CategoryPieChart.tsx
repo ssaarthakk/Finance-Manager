@@ -62,6 +62,7 @@ export const CategoryPieChart = ({ title, data, emptyText }: CategoryPieChartPro
             backgroundColor="transparent"
             paddingLeft="15"
             absolute
+            hasLegend={true}
           />
         </View>
       )}
