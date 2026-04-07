@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useRef } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Colors } from '../../constants/Colors';
@@ -13,14 +13,16 @@ interface Props {
   category: Category | undefined;
   index: number;
   onDelete: (t: Transaction) => void;
+  onEdit?: (t: Transaction) => void;
 }
 
-export function TransactionSwipeItem({ transaction, category, index, onDelete }: Props) {
+export function TransactionSwipeItem({ transaction, category, index, onDelete, onEdit }: Props) {
   const isIncome = transaction.type === 'income';
+  const swipeableRef = useRef<any>(null);
 
   const renderLeftActions = () => {
     return (
-      <View style={[styles.deleteAction, { alignItems: 'flex-start', paddingLeft: 20 }]}>
+      <View style={[styles.deleteAction, { alignItems: 'center' }]}>
         <Ionicons name="trash-outline" size={24} color="#FFF" />
       </View>
     );
@@ -28,19 +30,26 @@ export function TransactionSwipeItem({ transaction, category, index, onDelete }:
 
   const renderRightActions = () => {
     return (
-      <View style={[styles.deleteAction, { alignItems: 'flex-end', paddingRight: 20 }]}>
-        <Ionicons name="trash-outline" size={24} color="#FFF" />
-      </View>
+      <Pressable 
+        style={[styles.editAction, { alignItems: 'center' }]}
+        onPress={() => {
+          swipeableRef.current?.close();
+          onEdit?.(transaction);
+        }}
+      >
+        <Ionicons name="pencil-outline" size={24} color="#FFF" />
+      </Pressable>
     );
   };
 
   return (
     <Animated.View entering={FadeInUp.delay(200 + index * 50).springify()}>
       <ReanimatedSwipeable 
+        ref={swipeableRef}
         renderLeftActions={renderLeftActions} 
         renderRightActions={renderRightActions}
         onSwipeableOpen={(direction) => {
-          if (direction === 'left' || direction === 'right') {
+          if (direction === 'left') {
             onDelete(transaction);
           }
         }}
@@ -109,7 +118,14 @@ const styles = StyleSheet.create({
   deleteAction: {
     backgroundColor: '#EF4444',
     justifyContent: 'center',
-    width: '100%',
+    width: 100,
+    borderRadius: 16,
+    marginBottom: 12,
+  },
+  editAction: {
+    backgroundColor: '#3b82f6',
+    justifyContent: 'center',
+    width: 100,
     borderRadius: 16,
     marginBottom: 12,
   },

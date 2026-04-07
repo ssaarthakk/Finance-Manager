@@ -20,6 +20,8 @@ import { useAuthStore } from '../../store/authStore';
 import { useFinanceStore } from '../../store/financeStore';
 import { TransactionTypeToggle } from './TransactionTypeToggle';
 
+import { EmptyState } from '../ui/EmptyState';
+
 type FormData = {
   type: 'expense' | 'income';
   amount: string;
@@ -187,7 +189,10 @@ export function AddTransactionModal({ visible, onClose }: Props) {
                     </Pressable>
                   ))}
                   {availableCategories.length === 0 && (
-                    <Text style={styles.noCategoryText}>No categories found.</Text>
+                    <EmptyState 
+                      title="No categories available"
+                      icon="albums-outline"
+                    />
                   )}
                 </ScrollView>
               )}

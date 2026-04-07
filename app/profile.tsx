@@ -9,6 +9,7 @@ import { FinancialSummary } from '../components/profile/FinancialSummary';
 import { SegmentedToggle } from '../components/profile/SegmentedToggle';
 import { SettingsAndLogout } from '../components/profile/SettingsAndLogout';
 import { UserInfoCard } from '../components/profile/UserInfoCard';
+import { EmptyState } from '../components/ui/EmptyState';
 
 export default function ProfileScreen() {
   const { currentUser, logout, updateProfile } = useAuthStore();
@@ -71,11 +72,19 @@ export default function ProfileScreen() {
           onSave={handleSave}
         />
 
-        <FinancialSummary
-          income={totalIncome}
-          expenses={totalExpenses}
-          balance={balance}
-        />
+        {transactions.length === 0 ? (
+          <EmptyState
+            title="Start adding transactions"
+            subtitle="Start adding transactions to see your financial summary"
+            icon="server-outline"
+          />
+        ) : (
+          <FinancialSummary
+            income={totalIncome}
+            expenses={totalExpenses}
+            balance={balance}
+          />
+        )}
 
         <SettingsAndLogout
           onLogout={logout}

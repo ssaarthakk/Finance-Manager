@@ -3,6 +3,7 @@ import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import Animated, { FadeInUp } from 'react-native-reanimated';
+import { EmptyState } from '../ui/EmptyState';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -38,7 +39,11 @@ export const CategoryPieChart = ({ title, data, emptyText }: CategoryPieChartPro
       />
       <Text style={styles.title}>{title}</Text>
       {data.length === 0 ? (
-        <Text style={styles.emptyText}>{emptyText}</Text>
+        <EmptyState
+          title="No spending data"
+          subtitle="Your category breakdown will appear here"
+          icon="pie-chart-outline"
+        />
       ) : (
         <View style={styles.chartContainer}>
           <PieChart

@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnimatedBarChart } from '../components/balances/AnimatedBarChart';
 import { CategoryPieChart } from '../components/balances/CategoryPieChart';
 import { TransactionSwipeItem } from '../components/balances/TransactionSwipeItem';
+import { EmptyState } from '../components/ui/EmptyState';
 import { Colors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
@@ -126,30 +127,36 @@ export default function BalanceScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <CategoryPieChart title="Expenses by Category" data={expenseData} emptyText="No expenses tracked yet" />
-        <CategoryPieChart title="Income by Category" data={incomeData} emptyText="No income tracked yet" />
-
-        <AnimatedBarChart data={chartData} maxValue={maxChartVal} />
-
-        <View style={styles.transactionsHeader}>
-          <Text style={styles.transactionsTitle}>Recent Transactions</Text>
-        </View>
-
         {transactions.length === 0 ? (
-          <Text style={styles.emptyText}>No recent transactions.</Text>
+          <EmptyState 
+            title="No data available"
+            subtitle="Add transactions to see your financial insights"
+            icon="bar-chart-outline"
+          />
         ) : (
-          transactions.slice().reverse().map((t, i) => {
-            const cat = categories.find(c => c.id === t.categoryId);
-            return (
-              <TransactionSwipeItem
-                key={t.id}
-                transaction={t}
-                category={cat}
-                index={i}
-                onDelete={handleDelete}
-              />
-            );
-          })
+          <>
+            <CategoryPieChart title="Expenses by Category" data={expenseData} emptyText="No expenses tracked yet" />
+            <CategoryPieChart title="Income by Category" data={incomeData} emptyText="No income tracked yet" />
+
+            <AnimatedBarChart data={chartData} maxValue={maxChartVal} />
+
+            <View style={styles.transactionsHeader}>
+              <Text style={styles.transactionsTitle}>Recent Transactions</Text>
+            </View>
+
+            {transactions.slice().reverse().map((t, i) => {
+              const cat = categories.find(c => c.id === t.categoryId);
+              return (
+                <TransactionSwipeItem
+                  key={t.id}
+                  transaction={t}
+                  category={cat}
+                  index={i}
+                  onDelete={handleDelete}
+                />
+              );
+            })}
+          </>
         )}
       </ScrollView>
 

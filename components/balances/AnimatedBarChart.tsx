@@ -10,6 +10,8 @@ import { Colors } from '../../constants/Colors';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { EmptyState } from '../ui/EmptyState';
+
 interface BarData {
     id: string;
     label: string;
@@ -67,6 +69,8 @@ const Bar = ({ item, maxValue, index }: { item: BarData, maxValue: number, index
 };
 
 export const AnimatedBarChart = ({ data, maxValue }: AnimatedBarChartProps) => {
+    const totalVal = data.reduce((sum, d) => sum + d.value, 0);
+
     return (
         <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.container}>
             <LinearGradient 
@@ -76,16 +80,25 @@ export const AnimatedBarChart = ({ data, maxValue }: AnimatedBarChartProps) => {
               style={[StyleSheet.absoluteFill, { borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]} 
             />
             <Text style={styles.title}>Weekly Spending</Text>
-            <View style={styles.chartArea}>
-                {data.map((item, index) => (
-                    <Bar 
-                        key={item.id} 
-                        item={item} 
-                        maxValue={maxValue} 
-                        index={index} 
-                    />
-                ))}
-            </View>
+
+            {totalVal === 0 ? (
+                <EmptyState 
+                  title="No spending data"
+                  subtitle="Add transactions to see your spending trends"
+                  emoji="📊"
+                />
+            ) : (
+                <View style={styles.chartArea}>
+                    {data.map((item, index) => (
+                        <Bar 
+                            key={item.id} 
+                            item={item} 
+                            maxValue={maxValue} 
+                            index={index} 
+                        />
+                    ))}
+                </View>
+            )}
         </Animated.View>
     );
 };

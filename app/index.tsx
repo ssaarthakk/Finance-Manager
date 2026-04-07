@@ -8,6 +8,7 @@ import { FloatingActionButton } from '../components/dashboard/FloatingActionButt
 import { NotificationModal } from '../components/dashboard/NotificationModal';
 import { SegmentedControl } from '../components/dashboard/SegmentedControl';
 import { AddTransactionModal } from '../components/transaction/AddTransactionModal';
+import { EmptyState } from '../components/ui/EmptyState';
 import { Colors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
@@ -67,13 +68,25 @@ export default function Dashboard() {
                     expense={expense} 
                 />
 
-                <SegmentedControl 
-                    options={['Weekly', 'Monthly']}
-                    selectedIndex={timeFilter}
-                    onChange={setTimeFilter}
-                />
+                {transactions.length === 0 ? (
+                    <EmptyState 
+                        title="No transactions yet 💸" 
+                        subtitle="Start tracking your income and expenses" 
+                        icon="wallet-outline" 
+                        buttonText="Add Transaction" 
+                        onPress={() => setIsAddModalVisible(true)} 
+                    />
+                ) : (
+                    <>
+                        <SegmentedControl 
+                            options={['Weekly', 'Monthly']}
+                            selectedIndex={timeFilter}
+                            onChange={setTimeFilter}
+                        />
 
-                <CategoryList expenses={expensesList} />
+                        <CategoryList expenses={expensesList} />
+                    </>
+                )}
             </ScrollView>
 
             <FloatingActionButton onPress={() => setIsAddModalVisible(true)} />
