@@ -3,7 +3,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
-import { Colors } from '../../constants/Colors';
+import { Colors, useThemeColors } from '../../constants/Colors';
+import { useThemeStore } from '../../store/themeStore';
 import { Category } from '../../types/category';
 
 export interface GroupedExpense {
@@ -17,42 +18,45 @@ interface CategoryListProps {
 }
 
 export function CategoryList({ expenses }: CategoryListProps) {
+    const themeColors = useThemeColors();
+    const { theme } = useThemeStore();
+
     if (expenses.length === 0) {
         return (
             <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No expenses yet. Tap + to add!</Text>
+                <Text style={[styles.emptyText, { color: themeColors.textMuted }]}>No expenses yet. Tap + to add!</Text>
             </View>
         );
     }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.sectionTitle}>Your expenses</Text>
+            <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Your expenses</Text>
 
             {expenses.map((expense, index) => (
                 <Animated.View
                     key={expense.category.id}
                     entering={FadeInUp.delay(200 + index * 100).springify().mass(0.5)}
-                    style={styles.card}
+                    style={[styles.card, { backgroundColor: themeColors.card }]}
                 >
                     <LinearGradient 
-                      colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']} 
+                      colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']} 
                       start={{ x: 0, y: 1 }}
                       end={{ x: 1, y: 0 }}
-                      style={[StyleSheet.absoluteFill, { borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]} 
+                      style={[StyleSheet.absoluteFill, { borderRadius: 20, borderWidth: 1, borderColor: themeColors.border }]} 
                     />
                     <View style={styles.leftContent}>
                         <View style={[styles.iconContainer, { backgroundColor: expense.category.color + '20' }]}>
                             <Ionicons name={(expense.category.icon as any) || 'cube'} size={20} color={expense.category.color} />
                         </View>
                         <View>
-                            <Text style={styles.categoryName}>{expense.category.name}</Text>
-                            <Text style={styles.insight}>{expense.insight}</Text>
+                            <Text style={[styles.categoryName, { color: themeColors.text }]}>{expense.category.name}</Text>
+                            <Text style={[styles.insight, { color: themeColors.textMuted }]}>{expense.insight}</Text>
                         </View>
                     </View>
 
                     <View style={styles.rightContent}>
-                        <Text style={styles.amount}>₹{expense.amount.toLocaleString('en-IN')}</Text>
+                        <Text style={[styles.amount, { color: themeColors.text }]}>₹{expense.amount.toLocaleString('en-IN')}</Text>
                     </View>
                 </Animated.View>
             ))}
@@ -66,7 +70,6 @@ const styles = StyleSheet.create({
         paddingBottom: 40,
     },
     sectionTitle: {
-        color: Colors.white,
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 16,

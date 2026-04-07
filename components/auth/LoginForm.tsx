@@ -1,7 +1,6 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
-import { Colors } from '../../constants/Colors';
+import { View } from 'react-native';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
@@ -65,15 +64,3 @@ export function LoginForm({ control, errors, onSubmit, isLoading }: LoginFormPro
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    forgotPasswordButton: {
-        marginTop: 16,
-    },
-    forgotPasswordText: {
-        color: Colors.white,
-        fontSize: 13,
-        textAlign: 'right',
-        fontWeight: '500',
-    }
-});

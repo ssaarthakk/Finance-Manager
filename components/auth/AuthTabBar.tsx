@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors } from '../../constants/Colors';
+import { useThemeColors } from '../../constants/Colors';
 
 interface AuthTabBarProps {
   activeTab: 'signin' | 'signup';
@@ -10,6 +10,8 @@ interface AuthTabBarProps {
 export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
   const [tabWidth, setTabWidth] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current;
+  const themeColors = useThemeColors();
+  const styles = getStyles(themeColors);
 
   useEffect(() => {
     Animated.spring(translateX, {
@@ -18,7 +20,7 @@ export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
       bounciness: 0,
       speed: 20,
     }).start();
-  }, [activeTab, tabWidth]);
+  }, [activeTab, tabWidth, translateX]);
 
   const onLayout = (e: LayoutChangeEvent) => {
     setTabWidth(e.nativeEvent.layout.width / 2);
@@ -51,10 +53,10 @@ export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: Colors.tabBar,
+    backgroundColor: themeColors.tabBar,
     borderRadius: 9999, // rounded-full
     padding: 4,
     marginBottom: 24,
@@ -65,9 +67,9 @@ const styles = StyleSheet.create({
     top: 4,
     bottom: 4,
     left: 4,
-    backgroundColor: Colors.white,
+    backgroundColor: themeColors.background,
     borderRadius: 9999,
-    shadowColor: Colors.shadow,
+    shadowColor: themeColors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 1,
@@ -84,9 +86,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   activeTabText: {
-    color: Colors.black,
+    color: themeColors.text,
   },
   inactiveTabText: {
-    color: Colors.textMuted, // text-gray-400
+    color: themeColors.textMuted, // text-gray-400
   }
 });

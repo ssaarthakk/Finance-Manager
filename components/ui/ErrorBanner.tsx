@@ -1,12 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../../constants/Colors';
+import { useThemeColors } from '../../constants/Colors';
 
 interface ErrorBannerProps {
   error: string;
 }
 
 export function ErrorBanner({ error }: ErrorBannerProps) {
+  const themeColors = useThemeColors();
+  const styles = getStyles(themeColors);
+
   if (!error) return null;
   
   return (
@@ -16,16 +19,16 @@ export function ErrorBanner({ error }: ErrorBannerProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet.create({
   container: {
-    backgroundColor: Colors.errorBg,
+    backgroundColor: themeColors.errorBg,
     padding: 12,
     borderRadius: 12,
     marginBottom: 16,
     alignItems: 'center',
   },
   text: {
-    color: Colors.errorText,
+    color: themeColors.errorText,
     fontSize: 14,
     textAlign: 'center',
   }

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View, ViewStyle } from 'react-native';
-import { Colors } from '../../constants/Colors';
+import { useThemeColors } from '../../constants/Colors';
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -13,6 +13,8 @@ interface InputProps extends TextInputProps {
 
 export function Input({ label, error, isPassword, rightElement, containerStyle, ...props }: InputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const themeColors = useThemeColors();
+  const styles = getStyles(themeColors);
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -20,13 +22,13 @@ export function Input({ label, error, isPassword, rightElement, containerStyle, 
       <View style={[styles.inputContainer, isPassword && styles.inputContainerPassword]}>
         <TextInput
           style={styles.input}
-          placeholderTextColor={Colors.placeholder}
+          placeholderTextColor={themeColors.textMuted}
           secureTextEntry={isPassword && !isPasswordVisible}
           {...props}
         />
         {isPassword && (
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.iconButton}>
-            <Ionicons name={isPasswordVisible ? "eye-outline" : "eye-off-outline"} size={20} color={Colors.placeholder} />
+            <Ionicons name={isPasswordVisible ? "eye-outline" : "eye-off-outline"} size={20} color={themeColors.textMuted} />
           </TouchableOpacity>
         )}
       </View>
@@ -36,7 +38,7 @@ export function Input({ label, error, isPassword, rightElement, containerStyle, 
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet.create({
   container: {
     marginBottom: 16,
     position: 'relative',
@@ -44,14 +46,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.text,
+    color: themeColors.text,
     marginBottom: 8,
     marginLeft: 4,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.input,
+    backgroundColor: themeColors.input,
     borderRadius: 14,
     overflow: 'hidden',
   },
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: Colors.text,
+    color: themeColors.text,
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   errorText: {
-    color: Colors.errorInput,
+    color: '#EF4444',
     fontSize: 12,
     marginTop: 4,
     marginLeft: 4,

@@ -166,11 +166,11 @@ export default function BalanceScreen() {
         <Animated.View 
           entering={SlideInDown.springify()} 
           exiting={SlideOutDown} 
-          style={styles.toastContainer}
+          style={[styles.toastContainer, { backgroundColor: themeColors.text, shadowColor: themeColors.shadow }]}
         >
-          <Text style={styles.toastText}>Transaction deleted</Text>
+          <Text style={[styles.toastText, { color: themeColors.background }]}>Transaction deleted</Text>
           <Pressable onPress={handleUndo} style={styles.undoBtn}>
-            <Text style={styles.undoText}>Undo</Text>
+            <Text style={[styles.undoText, { color: themeColors.chartMint }]}>Undo</Text>
           </Pressable>
         </Animated.View>
       )}
@@ -221,21 +221,18 @@ const styles = StyleSheet.create({
     bottom: 100,
     left: 20,
     right: 20,
-    backgroundColor: '#333',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 6,
   },
   toastText: {
-    color: '#FFF',
     fontSize: 14,
     fontWeight: '500',
   },
@@ -243,7 +240,6 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   undoText: {
-    color: Colors.chartMint,
     fontWeight: 'bold',
     fontSize: 15,
   }

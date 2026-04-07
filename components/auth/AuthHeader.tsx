@@ -31,14 +31,14 @@ const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet
   logoContainer: {
     width: 64,
     height: 64,
-    backgroundColor: themeColors.white,
+    backgroundColor: themeColors.primary,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
   },
   logoText: {
-    color: themeColors.black,
+    color: themeColors.background,
     fontWeight: 'bold',
     fontSize: 30,
   },

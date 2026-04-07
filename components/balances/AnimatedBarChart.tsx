@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
@@ -6,9 +7,8 @@ import Animated, {
     useSharedValue,
     withSpring
 } from 'react-native-reanimated';
-import { Colors } from '../../constants/Colors';
-
-import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, useThemeColors } from '../../constants/Colors';
+import { useThemeStore } from '../../store/themeStore';
 
 import { EmptyState } from '../ui/EmptyState';
 
@@ -25,6 +25,7 @@ interface AnimatedBarChartProps {
 
 const Bar = ({ item, maxValue, index }: { item: BarData, maxValue: number, index: number }) => {
     const scaleY = useSharedValue(0);
+    const themeColors = useThemeColors();
 
     useEffect(() => {
         setTimeout(() => {
@@ -47,7 +48,7 @@ const Bar = ({ item, maxValue, index }: { item: BarData, maxValue: number, index
 
     return (
         <View style={styles.barContainer}>
-            <View style={styles.barWrapper}>
+            <View style={[styles.barWrapper, { backgroundColor: themeColors.layer1 }]}>
                 <Animated.View 
                     style={[
                         styles.barFill, 
@@ -56,30 +57,32 @@ const Bar = ({ item, maxValue, index }: { item: BarData, maxValue: number, index
                     ]} 
                 >
                     <LinearGradient
-                        colors={[Colors.chartPeach, Colors.chartMint]}
+                        colors={[themeColors.chartPeach, themeColors.chartMint]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={StyleSheet.absoluteFill}
                     />
                 </Animated.View>
             </View>
-            <Text style={styles.barLabel}>{item.label}</Text>
+            <Text style={[styles.barLabel, { color: themeColors.textMuted }]}>{item.label}</Text>
         </View>
     );
 };
 
 export const AnimatedBarChart = ({ data, maxValue }: AnimatedBarChartProps) => {
+    const themeColors = useThemeColors();
+    const { theme } = useThemeStore();
     const totalVal = data.reduce((sum, d) => sum + d.value, 0);
 
     return (
         <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.container}>
             <LinearGradient 
-              colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']} 
+              colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']} 
               start={{ x: 0, y: 1 }}
               end={{ x: 1, y: 0 }}
-              style={[StyleSheet.absoluteFill, { borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]} 
+              style={[StyleSheet.absoluteFill, { borderRadius: 24, borderWidth: 1, borderColor: themeColors.border }]} 
             />
-            <Text style={styles.title}>Weekly Spending</Text>
+            <Text style={[styles.title, { color: themeColors.text }]}>Weekly Spending</Text>
 
             {totalVal === 0 ? (
                 <EmptyState 

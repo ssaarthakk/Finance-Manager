@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { LayoutRectangle, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import { Colors } from '../constants/Colors';
+import { useThemeColors } from '../constants/Colors';
 
 const getIconName = (routeName: string): keyof typeof Feather.glyphMap => {
     switch (routeName) {
@@ -29,6 +29,8 @@ function TabItem({
     onLayout
 }: any) {
     const scale = useSharedValue(isFocused ? 1.2 : 1);
+    const themeColors = useThemeColors();
+    const styles = getStyles(themeColors);
 
     useEffect(() => {
         scale.value = withSpring(isFocused ? 1.2 : 1, { damping: 15, stiffness: 200 });
@@ -60,7 +62,7 @@ function TabItem({
                     <Feather 
                         name={iconName} 
                         size={20} 
-                        color={isFocused ? Colors.black : Colors.textMuted} 
+                        color={isFocused ? themeColors.textInverted : themeColors.textMuted} 
                     />
                 </Animated.View>
                 {isFocused && (
@@ -69,7 +71,7 @@ function TabItem({
                         exiting={FadeOut.duration(200)}
                         style={[
                             styles.tabLabel, 
-                            { color: Colors.black }
+                            { color: themeColors.textInverted }
                         ]}
                     >
                         {label as string}
@@ -82,6 +84,8 @@ function TabItem({
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     const { buildHref } = useLinkBuilder();
+    const themeColors = useThemeColors();
+    const styles = getStyles(themeColors);
     const [dimensions, setDimensions] = useState<{ [key: number]: LayoutRectangle }>({});
 
     // Sliding animated absolute pill logic
@@ -168,17 +172,17 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet.create({
     tabBar: {
         position: 'absolute',
         bottom: 30,
         alignSelf: 'center',
         flexDirection: 'row',
-        backgroundColor: Colors.card,
+        backgroundColor: themeColors.card,
         borderRadius: 40,
         paddingHorizontal: 8,
         paddingVertical: 8,
-        shadowColor: '#000',
+        shadowColor: themeColors.shadow,
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.4,
         shadowRadius: 15,
@@ -189,9 +193,9 @@ const styles = StyleSheet.create({
         left: 0, // removed offset so layout.x translates perfectly
         top: 8,  // paddingVertical
         bottom: 8,
-        backgroundColor: Colors.primary,
+        backgroundColor: themeColors.primary,
         borderRadius: 30,
-        shadowColor: Colors.primary,
+        shadowColor: themeColors.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,

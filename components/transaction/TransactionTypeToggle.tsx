@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import { useThemeColors } from '../../constants/Colors';
 
 type TypeToggleProps = {
   type: 'expense' | 'income';
@@ -15,7 +16,7 @@ const SPRING_CONFIG = {
 
 export function TransactionTypeToggle({ type, onChange }: TypeToggleProps) {
   const isIncome = type === 'income';
-  const progress = isIncome ? 1 : 0;
+  const themeColors = useThemeColors();
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -29,21 +30,21 @@ export function TransactionTypeToggle({ type, onChange }: TypeToggleProps) {
   }, [isIncome]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: themeColors.card }]}>
       <Animated.View style={[styles.indicator, animatedStyle]} />
       
       <Pressable 
         style={styles.button} 
         onPress={() => onChange('expense')}
       >
-        <Text style={[styles.text, !isIncome && styles.activeText]}>Expense</Text>
+        <Text style={[styles.text, { color: themeColors.textMuted }, !isIncome && styles.activeText]}>Expense</Text>
       </Pressable>
       
       <Pressable 
         style={styles.button} 
         onPress={() => onChange('income')}
       >
-        <Text style={[styles.text, isIncome && styles.activeText]}>Income</Text>
+        <Text style={[styles.text, { color: themeColors.textMuted }, isIncome && styles.activeText]}>Income</Text>
       </Pressable>
     </View>
   );
@@ -52,7 +53,6 @@ export function TransactionTypeToggle({ type, onChange }: TypeToggleProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#1A1A1A',
     borderRadius: 12,
     padding: 4,
     width: 320,
@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   text: {
-    color: '#808080',
     fontSize: 14,
     fontWeight: '600',
   },

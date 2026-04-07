@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
-import { Colors } from '../../constants/Colors';
+import { useThemeColors } from '../../constants/Colors';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
@@ -8,6 +8,9 @@ interface ButtonProps extends TouchableOpacityProps {
 }
 
 export function Button({ title, isLoading, style, ...props }: ButtonProps) {
+  const themeColors = useThemeColors();
+  const styles = getStyles(themeColors);
+
   return (
     <TouchableOpacity 
       style={[
@@ -21,16 +24,16 @@ export function Button({ title, isLoading, style, ...props }: ButtonProps) {
       {...props}
     >
       {isLoading ? (
-        <ActivityIndicator color={Colors.black} style={styles.loader} />
+        <ActivityIndicator color={themeColors.background} style={styles.loader} />
       ) : null}
       <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet.create({
   button: {
-    backgroundColor: Colors.white,
+    backgroundColor: themeColors.primary,
     borderRadius: 14,
     paddingVertical: 16,
     width: '100%',
@@ -49,7 +52,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   text: {
-    color: Colors.black,
+    color: themeColors.background,
     fontWeight: '600',
     fontSize: 16,
   }

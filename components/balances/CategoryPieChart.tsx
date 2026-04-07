@@ -3,6 +3,8 @@ import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import Animated, { FadeInUp } from 'react-native-reanimated';
+import { useThemeColors } from '../../constants/Colors';
+import { useThemeStore } from '../../store/themeStore';
 import { EmptyState } from '../ui/EmptyState';
 
 const screenWidth = Dimensions.get('window').width;
@@ -21,23 +23,26 @@ interface CategoryPieChartProps {
 }
 
 export const CategoryPieChart = ({ title, data, emptyText }: CategoryPieChartProps) => {
+  const themeColors = useThemeColors();
+  const { theme } = useThemeStore();
+
   const chartData = data.map((item) => ({
     name: item.name,
     amount: item.amount,
     color: item.color,
-    legendFontColor: '#7F7F7F',
+    legendFontColor: themeColors.textMuted,
     legendFontSize: 13,
   }));
 
   return (
     <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.container}>
       <LinearGradient
-        colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
+        colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
-        style={[StyleSheet.absoluteFill, { borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
+        style={[StyleSheet.absoluteFill, { borderRadius: 24, borderWidth: 1, borderColor: themeColors.border }]}
       />
-      <Text style={styles.title}>{title}</Text>
+      <Text style={[styles.title, { color: themeColors.text }]}>{title}</Text>
       {data.length === 0 ? (
         <EmptyState
           title="No spending data"

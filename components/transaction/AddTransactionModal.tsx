@@ -16,8 +16,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useThemeColors } from '../../constants/Colors';
 import { useAuthStore } from '../../store/authStore';
 import { useFinanceStore } from '../../store/financeStore';
+import { useThemeStore } from '../../store/themeStore';
 import { TransactionTypeToggle } from './TransactionTypeToggle';
 
 import { EmptyState } from '../ui/EmptyState';
@@ -38,6 +40,8 @@ type Props = {
 export function AddTransactionModal({ visible, onClose }: Props) {
   const { addTransaction, getCategories, transactions } = useFinanceStore();
   const { currentUser } = useAuthStore();
+  const themeColors = useThemeColors();
+  const { theme } = useThemeStore();
 
   const { control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
     defaultValues: {
@@ -105,7 +109,7 @@ export function AddTransactionModal({ visible, onClose }: Props) {
       presentationStyle="pageSheet"
       onRequestClose={handleClose}
     >
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: themeColors.background }]}>
       <KeyboardAwareScrollView 
         contentContainerStyle={styles.scrollContent} 
         keyboardShouldPersistTaps="handled"
@@ -116,9 +120,9 @@ export function AddTransactionModal({ visible, onClose }: Props) {
           
           <View style={styles.header}>
             <Pressable onPress={handleClose} style={styles.backButton}>
-              <Ionicons name="close" size={28} color="#FFFFFF" />
+              <Ionicons name="close" size={28} color={themeColors.text} />
             </Pressable>
-            <Text style={styles.headerTitle}>New Transaction</Text>
+            <Text style={[styles.headerTitle, { color: themeColors.text }]}>New Transaction</Text>
             <View style={{ width: 36 }} />
           </View>
 
@@ -137,9 +141,9 @@ export function AddTransactionModal({ visible, onClose }: Props) {
           />
 
           <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.inputGroup}>
-            <Text style={styles.label}>Amount</Text>
-            <View style={styles.amountContainer}>
-              <Text style={styles.currencyPrefix}>₹</Text>
+            <Text style={[styles.label, { color: themeColors.textMuted }]}>Amount</Text>
+            <View style={[styles.amountContainer, { backgroundColor: themeColors.card }]}>
+              <Text style={[styles.currencyPrefix, { color: themeColors.text }]}>₹</Text>
               <Controller
                 control={control}
                 name="amount"
@@ -153,9 +157,9 @@ export function AddTransactionModal({ visible, onClose }: Props) {
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    style={styles.amountInput}
+                    style={[styles.amountInput, { color: themeColors.text }]}
                     placeholder="0.00"
-                    placeholderTextColor="#666"
+                    placeholderTextColor={themeColors.textMuted}
                     keyboardType="numeric"
                     onBlur={onBlur}
                     onChangeText={onChange}
@@ -169,7 +173,7 @@ export function AddTransactionModal({ visible, onClose }: Props) {
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.inputGroup}>
-            <Text style={styles.label}>Category</Text>
+            <Text style={[styles.label, { color: themeColors.textMuted }]}>Category</Text>
             <Controller
               control={control}
               name="categoryId"
@@ -181,8 +185,9 @@ export function AddTransactionModal({ visible, onClose }: Props) {
                       key={cat.id}
                       style={[
                         styles.categoryPill,
+                        { backgroundColor: themeColors.card },
                         value === cat.id && { backgroundColor: cat.color + '40' },
-                        value === cat.id && styles.categoryPillSelected
+                        value === cat.id && { borderColor: themeColors.text }
                       ]}
                       onPress={() => onChange(cat.id)}
                     >
@@ -203,13 +208,13 @@ export function AddTransactionModal({ visible, onClose }: Props) {
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.inputGroup}>
-            <Text style={styles.label}>Date</Text>
+            <Text style={[styles.label, { color: themeColors.textMuted }]}>Date</Text>
             <Pressable 
-              style={styles.dateSelector}
+              style={[styles.dateSelector, { backgroundColor: themeColors.card }]}
               onPress={() => setShowDatePicker(true)}
             >
-              <Ionicons name="calendar-outline" size={20} color="#808080" />
-              <Text style={styles.dateText}>{selectedDate.toDateString()}</Text>
+              <Ionicons name="calendar-outline" size={20} color={themeColors.textMuted} />
+              <Text style={[styles.dateText, { color: themeColors.text }]}>{selectedDate.toDateString()}</Text>
             </Pressable>
             
             {showDatePicker && (
@@ -217,6 +222,7 @@ export function AddTransactionModal({ visible, onClose }: Props) {
                 value={selectedDate}
                 mode="date"
                 display="default"
+                themeVariant={theme}
                 onChange={(event, date) => {
                   setShowDatePicker(Platform.OS === 'ios');
                   if (date) {
@@ -228,15 +234,15 @@ export function AddTransactionModal({ visible, onClose }: Props) {
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(400).springify()} style={styles.inputGroup}>
-            <Text style={styles.label}>Note (Optional)</Text>
+            <Text style={[styles.label, { color: themeColors.textMuted }]}>Note (Optional)</Text>
             <Controller
               control={control}
               name="note"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { backgroundColor: themeColors.card, color: themeColors.text }]}
                   placeholder="What was this for?"
-                  placeholderTextColor="#666"
+                  placeholderTextColor={themeColors.textMuted}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}

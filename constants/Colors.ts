@@ -22,6 +22,7 @@ export const darkTheme = {
 
   layer1: 'rgba(255, 255, 255, 0.05)',
   layer2: 'rgba(255, 255, 255, 0.08)',
+  border: 'rgba(255, 255, 255, 0.1)',
 };
 
 export const lightTheme = {
@@ -46,6 +47,7 @@ export const lightTheme = {
 
   layer1: 'rgba(0, 0, 0, 0.05)',
   layer2: 'rgba(0, 0, 0, 0.08)',
+  border: 'rgba(0, 0, 0, 0.15)',
 };
 
 export const Colors = darkTheme;
