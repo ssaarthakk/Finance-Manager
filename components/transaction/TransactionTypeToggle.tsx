@@ -15,7 +15,6 @@ const SPRING_CONFIG = {
 
 export function TransactionTypeToggle({ type, onChange }: TypeToggleProps) {
   const isIncome = type === 'income';
-  // 0 for expense, 1 for income
   const progress = isIncome ? 1 : 0;
 
   const animatedStyle = useAnimatedStyle(() => {

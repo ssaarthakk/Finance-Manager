@@ -25,7 +25,6 @@ const Bar = ({ item, maxValue, index }: { item: BarData, maxValue: number, index
     const scaleY = useSharedValue(0);
 
     useEffect(() => {
-        // Staggered grow animation
         setTimeout(() => {
             scaleY.value = withSpring(1, { damping: 15, stiffness: 100 });
         }, index * 100);
@@ -36,14 +35,12 @@ const Bar = ({ item, maxValue, index }: { item: BarData, maxValue: number, index
             transform: [
                 { scaleY: scaleY.value }
             ],
-            // Transform origin bottom equivalent for React Native
             bottom: 0,
         };
     });
 
     const heightPercentage = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
     
-    // Fallback minimum height so empty bars still show up minimally
     const finalHeight = Math.max(heightPercentage, 2);
 
     return (
@@ -72,6 +69,12 @@ const Bar = ({ item, maxValue, index }: { item: BarData, maxValue: number, index
 export const AnimatedBarChart = ({ data, maxValue }: AnimatedBarChartProps) => {
     return (
         <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.container}>
+            <LinearGradient 
+              colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']} 
+              start={{ x: 0, y: 1 }}
+              end={{ x: 1, y: 0 }}
+              style={[StyleSheet.absoluteFill, { borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]} 
+            />
             <Text style={styles.title}>Weekly Spending</Text>
             <View style={styles.chartArea}>
                 {data.map((item, index) => (
@@ -89,7 +92,7 @@ export const AnimatedBarChart = ({ data, maxValue }: AnimatedBarChartProps) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#1A1A1A',
+        backgroundColor: 'transparent',
         borderRadius: 24,
         padding: 20,
         marginBottom: 20,
@@ -113,11 +116,11 @@ const styles = StyleSheet.create({
     },
     barWrapper: {
         height: 110,
-        width: 24, // Increased width
+        width: 24,
         backgroundColor: '#333',
         borderRadius: 12,
         justifyContent: 'flex-end',
-        overflow: 'hidden', // Ensures scaled child stays contained
+        overflow: 'hidden',
         marginBottom: 8,
     },
     barFill: {

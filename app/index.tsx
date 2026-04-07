@@ -3,63 +3,27 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BalanceCard } from '../components/dashboard/BalanceCard';
-import { CategoryList, GroupedExpense } from '../components/dashboard/CategoryList';
+import { CategoryList } from '../components/dashboard/CategoryList';
 import { FloatingActionButton } from '../components/dashboard/FloatingActionButton';
 import { SegmentedControl } from '../components/dashboard/SegmentedControl';
 import { AddTransactionModal } from '../components/transaction/AddTransactionModal';
 import { Colors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
-import { Category } from '../types/category';
-import { Transaction } from '../types/transaction';
-
-// --- DATA HELPERS ---
-const getTotalIncome = (transactions: Transaction[]) => 
-    transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-  
-const getTotalExpenses = (transactions: Transaction[]) => 
-    transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-
-const groupTransactionsByCategory = (transactions: Transaction[], categories: Category[]): GroupedExpense[] => {
-    const expenseTxs = transactions.filter(t => t.type === 'expense');
-    const grouped: Record<string, { category: Category, amount: number }> = {};
-    
-    expenseTxs.forEach(t => {
-      const category = categories.find(c => c.id === t.categoryId);
-      if (category) {
-          if (!grouped[t.categoryId]) {
-            grouped[t.categoryId] = { category, amount: 0 };
-          }
-          grouped[t.categoryId].amount += t.amount;
-      }
-    });
-  
-    return Object.values(grouped).sort((a, b) => b.amount - a.amount).map(g => ({
-        ...g,
-        insight: 'More than last week' // Placeholder insight
-    }));
-};
-
-const filterTransactionsByTime = (transactions: Transaction[], filterIndex: number): Transaction[] => {
-    const now = new Date();
-    const cutoff = new Date();
-    if (filterIndex === 0) { // Weekly
-        cutoff.setDate(now.getDate() - 7);
-    } else { // Monthly
-        cutoff.setMonth(now.getMonth() - 1);
-    }
-    return transactions.filter(t => new Date(t.date) >= cutoff);
-};
+import {
+    filterTransactionsByTime,
+    getTotalExpenses,
+    getTotalIncome,
+    groupTransactionsByCategory
+} from '../utils/financeHelpers';
 
 export default function Dashboard() {
     const { currentUser } = useAuthStore();
     const { transactions: allTransactions, categories: allCategories } = useFinanceStore();
     
-    // UI states
     const [timeFilter, setTimeFilter] = useState(0);
     const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
-    // Derived states
     const transactions = allTransactions.filter(t => !t.userId || t.userId === currentUser?.email);
     const categories = allCategories.filter(c => !c.userId || c.userId === currentUser?.email);
     const filteredTransactions = filterTransactionsByTime(transactions, timeFilter);

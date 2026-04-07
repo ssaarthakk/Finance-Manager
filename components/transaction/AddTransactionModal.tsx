@@ -85,7 +85,6 @@ export function AddTransactionModal({ visible, onClose }: Props) {
       >
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           
-          {/* Header */}
           <View style={styles.header}>
             <Pressable onPress={handleClose} style={styles.backButton}>
               <Ionicons name="close" size={28} color="#FFFFFF" />
@@ -94,7 +93,6 @@ export function AddTransactionModal({ visible, onClose }: Props) {
             <View style={{ width: 36 }} />
           </View>
 
-          {/* Type Toggle */}
           <Controller
             control={control}
             name="type"
@@ -103,13 +101,12 @@ export function AddTransactionModal({ visible, onClose }: Props) {
                 type={value} 
                 onChange={(type) => {
                   onChange(type);
-                  setValue('categoryId', ''); // reset category on type change
+                  setValue('categoryId', '');
                 }} 
               />
             )}
           />
 
-          {/* Amount Input */}
           <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.inputGroup}>
             <Text style={styles.label}>Amount</Text>
             <View style={styles.amountContainer}>
@@ -142,7 +139,6 @@ export function AddTransactionModal({ visible, onClose }: Props) {
             {errors.amount && <Text style={styles.errorText}>{errors.amount.message}</Text>}
           </Animated.View>
 
-          {/* Category Picker (Horizontal Scroll) */}
           <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.inputGroup}>
             <Text style={styles.label}>Category</Text>
             <Controller
@@ -174,7 +170,6 @@ export function AddTransactionModal({ visible, onClose }: Props) {
             {errors.categoryId && <Text style={styles.errorText}>{errors.categoryId.message}</Text>}
           </Animated.View>
 
-          {/* Date Picker */}
           <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.inputGroup}>
             <Text style={styles.label}>Date</Text>
             <Pressable 
@@ -200,7 +195,6 @@ export function AddTransactionModal({ visible, onClose }: Props) {
             )}
           </Animated.View>
 
-          {/* Note Input */}
           <Animated.View entering={FadeInDown.delay(400).springify()} style={styles.inputGroup}>
             <Text style={styles.label}>Note (Optional)</Text>
             <Controller
@@ -219,7 +213,6 @@ export function AddTransactionModal({ visible, onClose }: Props) {
             />
           </Animated.View>
 
-          {/* Submit Button */}
           <Animated.View entering={FadeInDown.delay(500).springify()} style={styles.submitContainer}>
             <Pressable 
               style={[

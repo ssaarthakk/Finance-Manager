@@ -28,7 +28,7 @@ export function FloatingActionButton({ onPress }: { onPress: () => void }) {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        bottom: 110, // above bottom tab nav
+        bottom: 110,
         right: 24,
         zIndex: 10,
     },

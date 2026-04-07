@@ -10,7 +10,7 @@ import { Colors } from '../../constants/Colors';
 
 interface RingProgressProps {
     balance: number;
-    progress: number; // 0 to 1
+    progress: number;
 }
 
 export const RingProgress = ({ balance, progress }: RingProgressProps) => {
@@ -53,13 +53,12 @@ const styles = StyleSheet.create({
         height: 220,
         borderRadius: 110,
         borderWidth: 20,
-        borderColor: '#222', // track color
+        borderColor: '#222',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
     },
     progressRingIndicator: {
-        // A faux progress visualization layering a border
         position: 'absolute',
         width: 220,
         height: 220,
@@ -68,7 +67,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.chartMint || '#A8E6CF',
         borderTopColor: 'transparent',
         borderRightColor: 'transparent',
-        transform: [{ rotate: '-45deg' }], // Makes it look like a semi-circle bottom-left sweep
+        transform: [{ rotate: '-45deg' }],
     },
     innerCircle: {
         width: 160,

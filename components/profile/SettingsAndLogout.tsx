@@ -36,7 +36,6 @@ export function SettingsAndLogout({ onLogout }: SettingsAndLogoutProps) {
                 </View>
             </Animated.View>
 
-            {/* Logout */}
             <Animated.View entering={FadeInDown.delay(600).springify()} style={styles.logoutContainer}>
                 <AnimatedPressable 
                     onPressIn={() => { logoutScale.value = withSpring(0.95); }}

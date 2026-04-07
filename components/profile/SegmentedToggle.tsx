@@ -11,8 +11,6 @@ interface SegmentedToggleProps {
 export function SegmentedToggle({ isEditMode, onToggle }: SegmentedToggleProps) {
     const toggleX = useSharedValue(isEditMode ? 1 : 0);
 
-    // Update shared value if prop changes (though standard practice would hook this all inside here,
-    // we keep state lifted to parent to control inputs)
     React.useEffect(() => {
         toggleX.value = withSpring(isEditMode ? 1 : 0, { damping: 25, stiffness: 250, mass: 0.8 });
     }, [isEditMode]);

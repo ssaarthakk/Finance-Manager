@@ -27,37 +27,36 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
-        {/* Header & Avatar */}
+
         <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
-            <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{userInitial}</Text>
-            </View>
-            <Text style={styles.userName}>{name || 'User'}</Text>
-            <Text style={styles.userEmail}>{email}</Text>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{userInitial}</Text>
+          </View>
+          <Text style={styles.userName}>{name || 'User'}</Text>
+          <Text style={styles.userEmail}>{email}</Text>
         </Animated.View>
 
-        <SegmentedToggle 
-            isEditMode={isEditMode} 
-            onToggle={setIsEditMode} 
+        <SegmentedToggle
+          isEditMode={isEditMode}
+          onToggle={setIsEditMode}
         />
 
-        <UserInfoCard 
-            isEditMode={isEditMode}
-            name={name}
-            email={email}
-            onNameChange={setName}
-            onEmailChange={setEmail}
+        <UserInfoCard
+          isEditMode={isEditMode}
+          name={name}
+          email={email}
+          onNameChange={setName}
+          onEmailChange={setEmail}
         />
 
-        <FinancialSummary 
-            income={totalIncome}
-            expenses={totalExpenses}
-            balance={balance}
+        <FinancialSummary
+          income={totalIncome}
+          expenses={totalExpenses}
+          balance={balance}
         />
 
-        <SettingsAndLogout 
-            onLogout={logout} 
+        <SettingsAndLogout
+          onLogout={logout}
         />
 
       </ScrollView>

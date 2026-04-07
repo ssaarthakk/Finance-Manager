@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
@@ -34,6 +35,12 @@ export function CategoryList({ expenses }: CategoryListProps) {
                     entering={FadeInUp.delay(200 + index * 100).springify().mass(0.5)}
                     style={styles.card}
                 >
+                    <LinearGradient 
+                      colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']} 
+                      start={{ x: 0, y: 1 }}
+                      end={{ x: 1, y: 0 }}
+                      style={[StyleSheet.absoluteFill, { borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]} 
+                    />
                     <View style={styles.leftContent}>
                         <View style={[styles.iconContainer, { backgroundColor: expense.category.color + '20' }]}>
                             <Ionicons name={(expense.category.icon as any) || 'cube'} size={20} color={expense.category.color} />
@@ -68,7 +75,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: Colors.card,
+        backgroundColor: 'transparent',
         padding: 16,
         borderRadius: 20,
         marginBottom: 12,

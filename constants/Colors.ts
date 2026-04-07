@@ -17,4 +17,7 @@ export const Colors = {
 
   chartPeach: '#FED4B4',
   chartMint: '#3BB9A1',
+
+  layer1: 'rgba(255, 255, 255, 0.05)',
+  layer2: 'rgba(255, 255, 255, 0.08)',
 };

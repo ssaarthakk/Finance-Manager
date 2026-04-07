@@ -1,8 +1,8 @@
 import Feather from '@expo/vector-icons/Feather';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeInUp } from 'react-native-reanimated';
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+import Animated, { FadeInUp, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Colors } from '../../constants/Colors';
 
 interface BalanceCardProps {
@@ -11,10 +11,31 @@ interface BalanceCardProps {
     expense: number;
 }
 
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+
+function AnimatedNumber({ value, style }: { value: number; style: any }) {
+    const animatedValue = useSharedValue(value);
+
+    useEffect(() => {
+        animatedValue.value = withTiming(value, { duration: 700 });
+    }, [animatedValue, value]);
+
+    const animatedProps = useAnimatedProps(() => ({
+        text: `₹${Math.round(animatedValue.value).toLocaleString('en-IN')}`,
+    }));
+
+    return (
+        <AnimatedTextInput
+            editable={false}
+            underlineColorAndroid="transparent"
+            defaultValue={`₹${Math.round(value).toLocaleString('en-IN')}`}
+            animatedProps={animatedProps as any}
+            style={style}
+        />
+    );
+}
+
 export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
-    // Optional: Animated number implementation
-    // For simplicity, just rendering normally with FadeInUp animation
-    
     return (
         <Animated.View entering={FadeInUp.springify().mass(0.5).delay(100)} style={styles.container}>
             <LinearGradient
@@ -25,7 +46,7 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
             >
                 <View style={styles.topSection}>
                     <Text style={styles.label}>Total Balance</Text>
-                    <Text style={styles.balance}>₹{balance.toLocaleString('en-IN')}</Text>
+                    <AnimatedNumber value={balance} style={styles.balance} />
                 </View>
 
                 <View style={styles.bottomSection}>
@@ -35,7 +56,7 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
                         </View>
                         <View>
                             <Text style={styles.subLabel}>Income</Text>
-                            <Text style={styles.subValue}>₹{income.toLocaleString('en-IN')}</Text>
+                            <AnimatedNumber value={income} style={styles.subValue} />
                         </View>
                     </View>
 
@@ -45,7 +66,7 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
                         </View>
                         <View>
                             <Text style={styles.subLabel}>Expense</Text>
-                            <Text style={styles.subValue}>₹{expense.toLocaleString('en-IN')}</Text>
+                            <AnimatedNumber value={expense} style={styles.subValue} />
                         </View>
                     </View>
                 </View>

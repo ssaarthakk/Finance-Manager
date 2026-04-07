@@ -18,14 +18,14 @@ export function ErrorBanner({ error }: ErrorBannerProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.errorBg, // bg-red-900/40 approx
+    backgroundColor: Colors.errorBg,
     padding: 12,
     borderRadius: 12,
     marginBottom: 16,
     alignItems: 'center',
   },
   text: {
-    color: Colors.errorText, // text-red-200
+    color: Colors.errorText,
     fontSize: 14,
     textAlign: 'center',
   }

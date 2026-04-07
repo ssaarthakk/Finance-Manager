@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
@@ -19,7 +20,6 @@ interface CategoryPieChartProps {
 }
 
 export const CategoryPieChart = ({ title, data, emptyText }: CategoryPieChartProps) => {
-  // Format data for react-native-chart-kit
   const chartData = data.map((item) => ({
     name: item.name,
     amount: item.amount,
@@ -30,6 +30,12 @@ export const CategoryPieChart = ({ title, data, emptyText }: CategoryPieChartPro
 
   return (
     <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.container}>
+      <LinearGradient
+        colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 0 }}
+        style={[StyleSheet.absoluteFill, { borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
+      />
       <Text style={styles.title}>{title}</Text>
       {data.length === 0 ? (
         <Text style={styles.emptyText}>{emptyText}</Text>
@@ -37,7 +43,7 @@ export const CategoryPieChart = ({ title, data, emptyText }: CategoryPieChartPro
         <View style={styles.chartContainer}>
           <PieChart
             data={chartData}
-            width={screenWidth - 40} // matching the padding from screen
+            width={screenWidth - 40}
             height={180}
             chartConfig={{
               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -45,7 +51,7 @@ export const CategoryPieChart = ({ title, data, emptyText }: CategoryPieChartPro
             accessor="amount"
             backgroundColor="transparent"
             paddingLeft="0"
-            absolute // Use absolute values instead of percentages in legend
+            absolute
           />
         </View>
       )}
@@ -55,7 +61,7 @@ export const CategoryPieChart = ({ title, data, emptyText }: CategoryPieChartPro
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1A1A1A',
+    backgroundColor: 'transparent',
     borderRadius: 24,
     padding: 20,
     marginBottom: 20,
@@ -68,7 +74,7 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     alignItems: 'center',
-    marginLeft: -10, // Adjust default padding from chart kit 
+    marginLeft: -10,
   },
   emptyText: {
     color: '#888',
