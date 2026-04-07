@@ -1,50 +1,64 @@
-# Welcome to your Expo app 👋
+# FlowFi - Personal Finance Manager
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+FlowFi is a modern, intuitive, and feature-rich personal finance management application built with Expo and React Native. It helps users track their income, expenses, and overall financial health with a clean and customizable interface.
 
-## Get started
+## 🌟 Features
 
-1. Install dependencies
+- **Dashboard:** Get a quick overview of your total balance, recent transactions, and spending categories.
+- **Transaction Management:** Easily add, edit, or delete transactions (both income and expenses).
+- **Categorization:** Group transactions into custom categories with unique icons and colors.
+- **Insightful Charts:** Visualize your spending habits with interactive bar and pie charts.
+- **Theming:** Full support for both **Light** and **Dark** modes, automatically adapting to your system preferences or manually togglable.
+- **Swipe Actions:** Intuitive swipe-to-delete gestures for managing transactions.
+- **Offline Support:** Data is stored locally using AsyncStorage, ensuring your financial info is always accessible without an internet connection.
 
-   ```bash
-   npm install
-   ```
+## 📸 Screenshots
 
-2. Start the app
+<div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px;">
+  <img src="./assets/screenshots/1.png" alt="Sign In Screen" width="200" />
+  <img src="./assets/screenshots/2.png" alt="Sign Up Screen" width="200" />
+  <img src="./assets/screenshots/3.png" alt="Home Screen" width="200" />
+  <img src="./assets/screenshots/4.png" alt="Balances Screen" width="200" />
+  <img src="./assets/screenshots/5.png" alt="Profile Screen" width="200" />
+</div>
 
-   ```bash
-   npx expo start
-   ```
+## 🚀 Setup Instructions
 
-In the output, you'll find options to open the app in a
+Follow these steps to run the project locally on your machine.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Prerequisites
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Node.js (v18 or newer recommended)
+- npm or yarn or pnpm
+- Expo CLI
+- iOS Simulator or Android Emulator (or the Expo Go app on your physical device)
 
-## Get a fresh project
-
-When you're ready, run:
-
+### 1. Clone the repository
 ```bash
-npm run reset-project
+git clone https://github.com/ssaarthakk/finance-manager.git
+cd finance-manager
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
 
-## Learn more
+### 3. Start the application
+```bash
+npx expo start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+This will start the Expo development server. From the terminal or the Expo Dev Tools browser tab, you can choose to run the app on an Android emulator, iOS simulator, or scan the QR code with the Expo Go app on your mobile device.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 🛠️ Technologies Used
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **Framework:** [React Native](https://reactnative.dev/) & [Expo](https://expo.dev/)
+- **Navigation:** [Expo Router](https://docs.expo.dev/router/introduction/) & React Navigation
+- **State Management:** [Zustand](https://github.com/pmndrs/zustand)
+- **Animations:** [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+- **Forms & Validation:** [React Hook Form](https://react-hook-form.com/)
+- **Charts:** [React Native Chart Kit](https://github.com/indiespirit/react-native-chart-kit)
+- **Storage:** [@react-native-async-storage/async-storage](https://react-native-async-storage.github.io/async-storage/)
