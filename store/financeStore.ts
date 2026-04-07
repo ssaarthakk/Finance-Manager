@@ -32,6 +32,8 @@ const defaultCategories: Category[] = [
     { id: 'cat-7', name: 'Freelance', icon: 'laptop-outline', color: '#00BCD4', type: 'income' },
     { id: 'cat-8', name: 'Investments', icon: 'trending-up-outline', color: '#8BC34A', type: 'income' },
     { id: 'cat-9', name: 'Entertainment', icon: 'game-controller-outline', color: '#673AB7', type: 'expense' },
+    { id: 'cat-10', name: 'Other', icon: 'ellipsis-horizontal-outline', color: '#757575', type: 'expense' },
+    { id: 'cat-11', name: 'Other', icon: 'ellipsis-horizontal-outline', color: '#757575', type: 'income' },
 ];
 
 interface FinanceState {
@@ -96,7 +98,16 @@ export const useFinanceStore = create<FinanceState>()(
             getCategories: (type) => {
                 const user = useAuthStore.getState().currentUser;
                 const { categories } = get();
-                let userCategories = categories.filter(c => !c.userId || c.userId === user?.email);
+                
+                // Ensure all default categories are always available even if state was persisted before they were added
+                const mergedCategories = [...categories];
+                defaultCategories.forEach(dc => {
+                    if (!mergedCategories.some(c => c.id === dc.id)) {
+                        mergedCategories.push(dc);
+                    }
+                });
+
+                let userCategories = mergedCategories.filter(c => !c.userId || c.userId === user?.email);
                 return type ? userCategories.filter((c) => c.type === type) : userCategories;
             },
         }),

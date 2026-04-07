@@ -1,21 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
 } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuthStore } from '../../store/authStore';
 import { useFinanceStore } from '../../store/financeStore';
 import { TransactionTypeToggle } from './TransactionTypeToggle';
 
@@ -33,7 +34,8 @@ type Props = {
 };
 
 export function AddTransactionModal({ visible, onClose }: Props) {
-  const { addTransaction, getCategories } = useFinanceStore();
+  const { addTransaction, getCategories, transactions } = useFinanceStore();
+  const { currentUser } = useAuthStore();
 
   const { control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
     defaultValues: {
@@ -51,6 +53,29 @@ export function AddTransactionModal({ visible, onClose }: Props) {
   const selectedDate = watch('date');
 
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      const userTransactions = transactions.filter(
+        t => t.type === transactionType && (!t.userId || t.userId === currentUser?.email)
+      );
+
+      if (userTransactions.length > 0) {
+        // Last item added is at the end of the array, so it's the last used
+        const lastTx = userTransactions[userTransactions.length - 1];
+        // Ensure that category actually still exists
+        if (availableCategories.some(c => c.id === lastTx.categoryId)) {
+          setValue('categoryId', lastTx.categoryId);
+          return;
+        }
+      }
+      
+      // Fallback to the first available category if no previous or deleted
+      if (availableCategories.length > 0) {
+        setValue('categoryId', availableCategories[0].id);
+      }
+    }
+  }, [visible, transactionType, transactions.length]); // Don't include availableCategories directly to prevent looping
 
   const onSubmit = (data: FormData) => {
     const numericAmount = parseFloat(data.amount);
