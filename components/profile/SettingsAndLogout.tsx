@@ -2,6 +2,7 @@ import Feather from '@expo/vector-icons/Feather';
 import React from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import Animated, { FadeInDown, useSharedValue, withSpring } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -17,7 +18,13 @@ export function SettingsAndLogout({ onLogout }: SettingsAndLogoutProps) {
         <>
             <Animated.View entering={FadeInDown.delay(500).springify()} style={styles.settingsSection}>
                 <Text style={styles.sectionTitle}>Settings</Text>
-                <View style={styles.card}>
+                <View style={[styles.card, { backgroundColor: 'transparent' }]}>
+                    <LinearGradient
+                      colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
+                      start={{ x: 0, y: 1 }}
+                      end={{ x: 1, y: 0 }}
+                      style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
+                    />
                     <View style={styles.settingRow}>
                         <View style={styles.settingLeft}>
                             <Feather name="moon" size={20} color={Colors.white} />
@@ -62,7 +69,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     card: {
-        backgroundColor: '#1A1A1A',
         borderRadius: 20,
         paddingVertical: 8,
         paddingHorizontal: 20,

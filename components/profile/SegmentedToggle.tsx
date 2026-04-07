@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import Animated, { FadeInDown, interpolateColor, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
 
 interface SegmentedToggleProps {
@@ -30,7 +31,13 @@ export function SegmentedToggle({ isEditMode, onToggle }: SegmentedToggleProps) 
     }));
 
     return (
-        <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.toggleContainer}>
+        <Animated.View entering={FadeInDown.delay(200).springify()} style={[styles.toggleContainer, { backgroundColor: 'transparent' }]}>
+            <LinearGradient
+                colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
+                start={{ x: 0, y: 1 }}
+                end={{ x: 1, y: 0 }}
+                style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 30, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
+            />
             <Animated.View style={[styles.togglePill, togglePillStyle]} />
             <Pressable style={styles.toggleButton} onPress={() => onToggle(false)}>
                 <Animated.Text style={[styles.toggleText, previewTextStyle]}>Preview</Animated.Text>
@@ -45,7 +52,6 @@ export function SegmentedToggle({ isEditMode, onToggle }: SegmentedToggleProps) 
 const styles = StyleSheet.create({
     toggleContainer: {
         flexDirection: 'row',
-        backgroundColor: '#1A1A1A',
         borderRadius: 30,
         padding: 4,
         width: 240,

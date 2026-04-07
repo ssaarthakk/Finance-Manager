@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
 
 interface UserInfoCardProps {
@@ -15,6 +16,12 @@ interface UserInfoCardProps {
 export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailChange, onSave }: UserInfoCardProps) {
     return (
         <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.card}>
+            <LinearGradient
+              colors={['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)']}
+              start={{ x: 0, y: 1 }}
+              end={{ x: 1, y: 0 }}
+              style={[StyleSheet.absoluteFill, { borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' }]}
+            />
             <View style={styles.fieldSection}>
                 <Text style={styles.label}>Full Name</Text>
                 {isEditMode ? (
@@ -60,7 +67,7 @@ export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailCha
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#1A1A1A',
+        backgroundColor: 'transparent',
         borderRadius: 20,
         paddingVertical: 8,
         paddingHorizontal: 20,
