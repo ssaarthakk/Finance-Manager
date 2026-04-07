@@ -1,7 +1,9 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useThemeColors } from '../../constants/Colors';
+import { useThemeStore } from '../../store/themeStore';
 
 interface AuthTabBarProps {
   activeTab: 'signin' | 'signup';
@@ -42,8 +44,9 @@ function AuthTabButton({
 export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
   const [tabWidth, setTabWidth] = useState(0);
   const translateX = useSharedValue(0);
+  const { theme } = useThemeStore();
   const themeColors = useThemeColors();
-  const styles = getStyles(themeColors);
+  const styles = getStyles(themeColors, theme);
 
   useEffect(() => {
     translateX.value = withSpring(activeTab === 'signin' ? 0 : tabWidth, {
@@ -63,6 +66,12 @@ export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
 
   return (
     <View style={styles.container} onLayout={onLayout}>
+      <LinearGradient
+        colors={theme === 'dark' ? ['rgba(255,255,255,0.15)', 'rgba(0,0,0,0.8)'] : ['rgba(255,255,255,0.8)', 'rgba(0,0,0,0.05)']}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 0 }}
+        style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 20, borderWidth: 1, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)' }]}
+      />
       <Animated.View
         style={[
           styles.activeBackground,
@@ -86,11 +95,11 @@ export function AuthTabBar({ activeTab, onTabChange }: AuthTabBarProps) {
   );
 }
 
-const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet.create({
+const getStyles = (themeColors: ReturnType<typeof useThemeColors>, theme: string) => StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: themeColors.tabBar,
-    borderRadius: 9999, // rounded-full
+    backgroundColor: themeColors.layer1,
+    borderRadius: 20, // matching SegmentedControl
     padding: 4,
     marginBottom: 24,
     position: 'relative',
@@ -100,12 +109,12 @@ const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet
     top: 4,
     bottom: 4,
     left: 4,
-    backgroundColor: themeColors.background,
-    borderRadius: 9999,
-    shadowColor: themeColors.shadow,
-    shadowOffset: { width: 0, height: 1 },
+    backgroundColor: themeColors.text,
+    borderRadius: 16, // match SegmentedControl
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 1,
+    shadowRadius: 4,
     elevation: 2,
   },
   tab: {
@@ -119,7 +128,7 @@ const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet
     fontWeight: '600',
   },
   activeTabText: {
-    color: themeColors.text,
+    color: themeColors.background,
   },
   inactiveTabText: {
     color: themeColors.textMuted, // text-gray-400
