@@ -18,9 +18,11 @@ import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useThemeColors } from '../../constants/Colors';
+import { SPACING } from '../../constants/Spacing';
 import { useAuthStore } from '../../store/authStore';
 import { useFinanceStore } from '../../store/financeStore';
 import { useThemeStore } from '../../store/themeStore';
+import { triggerHaptic } from '../../utils/haptics';
 import { simulateNetwork } from '../../utils/network';
 import { TransactionTypeToggle } from './TransactionTypeToggle';
 
@@ -152,7 +154,10 @@ export function AddTransactionModal({ visible, onClose }: Props) {
         type: data.type,
       });
 
+      triggerHaptic('success');
       handleClose();
+    } catch (e: any) {
+      triggerHaptic('error');
     } finally {
       setIsSubmitting(false);
     }
@@ -243,7 +248,10 @@ export function AddTransactionModal({ visible, onClose }: Props) {
                         value === cat.id && { backgroundColor: cat.color + '40' },
                         value === cat.id && { borderColor: themeColors.text }
                       ]}
-                      onPress={() => onChange(cat.id)}
+                      onPress={() => {
+                        triggerHaptic('selection');
+                        onChange(cat.id);
+                      }}
                     >
                       <Ionicons name={cat.icon as any} size={20} color={cat.color} />
                       <Text style={[styles.categoryText, { color: cat.color }]}>{cat.name}</Text>
@@ -265,7 +273,10 @@ export function AddTransactionModal({ visible, onClose }: Props) {
             <Text style={[styles.label, { color: themeColors.textMuted }]}>Date</Text>
             <Pressable 
               style={[styles.dateSelector, { backgroundColor: themeColors.card }]}
-              onPress={() => setShowDatePicker(true)}
+              onPress={() => {
+                triggerHaptic('light');
+                setShowDatePicker(true);
+              }}
             >
               <Ionicons name="calendar-outline" size={20} color={themeColors.textMuted} />
               <Text style={[styles.dateText, { color: themeColors.text }]}>{selectedDate.toDateString()}</Text>
@@ -332,18 +343,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 24,
-    paddingBottom: 48,
+    padding: SPACING.xl,
+    paddingBottom: SPACING.xxl * 2,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   backButton: {
-    padding: 8,
-    marginLeft: -8,
+    padding: SPACING.sm,
+    marginLeft: -SPACING.sm,
   },
   headerTitle: {
     fontSize: 20,
@@ -351,27 +362,27 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   inputGroup: {
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   label: {
     fontSize: 14,
     color: '#808080',
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     fontWeight: '500',
   },
   amountContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1A1A1A',
-    borderRadius: 16,
-    paddingHorizontal: 16,
+    borderRadius: SPACING.md,
+    paddingHorizontal: SPACING.md,
     height: 72,
   },
   currencyPrefix: {
     fontSize: 32,
     fontWeight: '600',
     color: '#FFFFFF',
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
   amountInput: {
     flex: 1,
@@ -386,10 +397,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1A1A1A',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm + 4,
     borderRadius: 24,
-    marginRight: 12,
+    marginRight: SPACING.sm + 4,
     borderWidth: 1,
     borderColor: 'transparent',
   },
@@ -397,7 +408,7 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
   },
   categoryText: {
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -409,19 +420,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1A1A1A',
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.md,
     height: 56,
-    borderRadius: 16,
+    borderRadius: SPACING.md,
   },
   dateText: {
     color: '#FFFFFF',
     fontSize: 16,
-    marginLeft: 12,
+    marginLeft: SPACING.sm + 4,
   },
   textInput: {
     backgroundColor: '#1A1A1A',
-    borderRadius: 16,
-    paddingHorizontal: 16,
+    borderRadius: SPACING.md,
+    paddingHorizontal: SPACING.md,
     height: 56,
     color: '#FFFFFF',
     fontSize: 16,
@@ -429,15 +440,15 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#EF4444',
     fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
+    marginTop: SPACING.xs,
+    marginLeft: SPACING.xs,
   },
   submitContainer: {
-    marginTop: 16,
+    marginTop: SPACING.md,
   },
   submitButton: {
     height: 56,
-    borderRadius: 16,
+    borderRadius: SPACING.md,
     alignItems: 'center',
     justifyContent: 'center',
   },

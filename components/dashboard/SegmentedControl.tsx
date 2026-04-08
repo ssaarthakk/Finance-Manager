@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { LayoutRectangle, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useThemeColors } from '../../constants/Colors';
+import { SPACING } from '../../constants/Spacing';
 import { useThemeStore } from '../../store/themeStore';
+import { triggerHaptic } from '../../utils/haptics';
 
 interface SegmentedControlProps {
     options: string[];
@@ -86,7 +88,12 @@ export function SegmentedControl({ options, selectedIndex, onChange }: Segmented
                         key={option}
                         option={option}
                         isSelected={isSelected}
-                        onPress={() => onChange(index)}
+                        onPress={() => {
+                            if (!isSelected) {
+                                triggerHaptic('selection');
+                                onChange(index);
+                            }
+                        }}
                         onLayout={(e) => {
                             const newLayout = e.nativeEvent.layout;
                             setDimensions(prev => ({ ...prev, [index]: newLayout }));
@@ -103,14 +110,14 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         borderRadius: 20,
-        padding: 4,
-        marginBottom: 24,
+        padding: SPACING.xs,
+        marginBottom: SPACING.xl,
         position: 'relative',
     },
     activePill: {
         position: 'absolute',
-        top: 4,
-        bottom: 4,
+        top: SPACING.xs,
+        bottom: SPACING.xs,
         borderRadius: 16,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },

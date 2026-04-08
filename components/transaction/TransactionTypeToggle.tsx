@@ -2,6 +2,8 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useThemeColors } from '../../constants/Colors';
+import { SPACING } from '../../constants/Spacing';
+import { triggerHaptic } from '../../utils/haptics';
 
 type TypeToggleProps = {
   type: 'expense' | 'income';
@@ -67,14 +69,24 @@ export function TransactionTypeToggle({ type, onChange }: TypeToggleProps) {
       <ToggleButton 
         label="Expense"
         isActive={!isIncome}
-        onPress={() => onChange('expense')}
+        onPress={() => {
+          if (isIncome) {
+            triggerHaptic('selection');
+            onChange('expense');
+          }
+        }}
         themeColors={themeColors}
       />
       
       <ToggleButton 
         label="Income"
         isActive={isIncome}
-        onPress={() => onChange('income')}
+        onPress={() => {
+          if (!isIncome) {
+            triggerHaptic('selection');
+            onChange('income');
+          }
+        }}
         themeColors={themeColors}
       />
     </View>
@@ -85,22 +97,22 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     borderRadius: 12,
-    padding: 4,
+    padding: SPACING.xs,
     width: 320,
     alignSelf: 'center',
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   indicator: {
     position: 'absolute',
-    left: 4,
-    top: 4,
+    left: SPACING.xs,
+    top: SPACING.xs,
     width: 156,
     height: '100%',
     borderRadius: 8,
   },
   button: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: SPACING.sm + 4,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,

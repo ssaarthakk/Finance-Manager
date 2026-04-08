@@ -11,6 +11,7 @@ import { SegmentedControl } from '../components/dashboard/SegmentedControl';
 import { AddTransactionModal } from '../components/transaction/AddTransactionModal';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Colors, useThemeColors } from '../constants/Colors';
+import { SPACING } from '../constants/Spacing';
 import { useAuthStore } from '../store/authStore';
 import { useFinanceStore } from '../store/financeStore';
 import {
@@ -140,9 +141,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingTop: 16,
-        paddingBottom: 8,
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.sm,
     },
     headerLeft: {
         flexDirection: 'row',
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primary,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 10,
+        marginRight: SPACING.sm + 2,
     },
     logoText: {
         color: Colors.black,
@@ -174,16 +175,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     scrollContent: {
-        padding: 20,
+        padding: SPACING.lg,
         paddingBottom: 100, // accommodate fab
     },
     greetingSection: {
-        marginBottom: 24,
+        marginBottom: SPACING.xl,
     },
     greeting: {
         fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 4,
+        marginBottom: SPACING.xs,
     },
     subtitle: {
         fontSize: 15,

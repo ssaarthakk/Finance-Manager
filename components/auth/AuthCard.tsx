@@ -6,6 +6,8 @@ import Animated, { FadeInUp, FadeOutUp, LinearTransition } from 'react-native-re
 import { useAuthStore } from '../../store/authStore';
 
 import { useThemeColors } from '../../constants/Colors';
+import { SPACING } from '../../constants/Spacing';
+import { triggerHaptic } from '../../utils/haptics';
 import { simulateNetwork } from '../../utils/network';
 import { Button } from '../ui/Button';
 import { ErrorBanner } from '../ui/ErrorBanner';
@@ -43,7 +45,9 @@ export function AuthCard() {
             } else {
                 await signUp(data.name, data.email, data.password);
             }
+            triggerHaptic('success');
         } catch (error: any) {
+            triggerHaptic('error');
             setGlobalError(error.message || 'An unexpected error occurred.');
         } finally {
             setIsLoading(false);
@@ -187,8 +191,8 @@ export function AuthCard() {
 const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet.create({
     formContainer: {
         backgroundColor: themeColors.card,
-        padding: 24,
-        borderRadius: 24,
+        padding: SPACING.xl,
+        borderRadius: SPACING.xl,
         width: '90%',
         maxWidth: 400
     },
@@ -196,11 +200,11 @@ const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet
         color: themeColors.text,
         fontSize: 24,
         fontWeight: '600',
-        marginBottom: 4
+        marginBottom: SPACING.xs
     },
     formSubtitle: {
         color: themeColors.textMuted,
         fontSize: 15,
-        marginBottom: 24
+        marginBottom: SPACING.xl
     }
 });

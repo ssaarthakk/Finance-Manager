@@ -1,7 +1,9 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TouchableOpacityProps } from 'react-native';
+import { ActivityIndicator, GestureResponderEvent, Pressable, StyleSheet, Text, TouchableOpacityProps } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useThemeColors } from '../../constants/Colors';
+import { SPACING } from '../../constants/Spacing';
+import { triggerHaptic } from '../../utils/haptics';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
@@ -28,6 +30,11 @@ export function Button({ title, isLoading, style, onPress, disabled, ...props }:
     scale.value = withSpring(1);
   };
 
+  const handlePress = (e: GestureResponderEvent) => {
+    triggerHaptic('light');
+    if (onPress) onPress(e);
+  };
+
   return (
     <AnimatedPressable 
       style={[
@@ -40,7 +47,7 @@ export function Button({ title, isLoading, style, onPress, disabled, ...props }:
       disabled={isLoading || disabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={onPress}
+      onPress={handlePress}
       {...props as any}
     >
       {isLoading ? (
@@ -55,10 +62,10 @@ const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet
   button: {
     backgroundColor: themeColors.primary,
     borderRadius: 14,
-    paddingVertical: 16,
+    paddingVertical: SPACING.md,
     width: '100%',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: SPACING.sm,
     flexDirection: 'row',
     justifyContent: 'center',
   },
@@ -69,7 +76,7 @@ const getStyles = (themeColors: ReturnType<typeof useThemeColors>) => StyleSheet
     opacity: 0.8,
   },
   loader: {
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
   text: {
     color: themeColors.background,

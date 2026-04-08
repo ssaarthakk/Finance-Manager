@@ -8,6 +8,8 @@ import { useThemeColors } from '../../constants/Colors';
 import { useThemeStore } from '../../store/themeStore';
 import { Category } from '../../types/category';
 import { Transaction } from '../../types/transaction';
+import { SPACING } from '../../constants/Spacing';
+import { triggerHaptic } from '../../utils/haptics';
 
 interface Props {
   transaction: Transaction;
@@ -49,6 +51,7 @@ export function TransactionSwipeItem({ transaction, category, index, onDelete }:
         renderRightActions={renderRightActions}
         onSwipeableOpen={(direction) => {
           if (direction === 'left' || direction === 'right') {
+            triggerHaptic('medium');
             onDelete(transaction);
           }
         }}
@@ -83,9 +86,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    padding: SPACING.md,
     borderRadius: 16,
-    marginBottom: 12,
+    marginBottom: SPACING.sm + 4, // 12
   },
   itemLeft: {
     flexDirection: 'row',
@@ -97,12 +100,12 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: SPACING.sm + 4, // 12
   },
   transactionName: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   transactionDate: {
     fontSize: 13,
@@ -116,6 +119,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     borderRadius: 16,
-    marginBottom: 12,
+    marginBottom: SPACING.sm + 4,
   },
 });
