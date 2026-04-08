@@ -22,6 +22,7 @@ import { useFinanceStore } from '../../store/financeStore';
 import { useThemeStore } from '../../store/themeStore';
 import { TransactionTypeToggle } from './TransactionTypeToggle';
 
+import { AmountInput } from '../ui/AmountInput';
 import { EmptyState } from '../ui/EmptyState';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -85,7 +86,7 @@ export function AddTransactionModal({ visible, onClose }: Props) {
   const themeColors = useThemeColors();
   const { theme } = useThemeStore();
 
-  const { control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
+  const { control, handleSubmit, watch, setValue, reset, formState: { errors, isValid } } = useForm<FormData>({
     defaultValues: {
       type: 'expense',
       amount: '',
@@ -93,6 +94,7 @@ export function AddTransactionModal({ visible, onClose }: Props) {
       date: new Date(),
       note: '',
     },
+    mode: 'onChange',
   });
 
   const transactionType = watch('type');
@@ -184,34 +186,27 @@ export function AddTransactionModal({ visible, onClose }: Props) {
 
           <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.inputGroup}>
             <Text style={[styles.label, { color: themeColors.textMuted }]}>Amount</Text>
-            <View style={[styles.amountContainer, { backgroundColor: themeColors.card }]}>
-              <Text style={[styles.currencyPrefix, { color: themeColors.text }]}>₹</Text>
-              <Controller
-                control={control}
-                name="amount"
-                rules={{ 
-                  required: 'Amount is required',
-                  validate: (value) => {
-                    const num = parseFloat(value);
-                    if (isNaN(num) || num <= 0) return 'Amount must be greater than 0';
-                    return true;
-                  }
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={[styles.amountInput, { color: themeColors.text }]}
-                    placeholder="0.00"
-                    placeholderTextColor={themeColors.textMuted}
-                    keyboardType="numeric"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoFocus
-                  />
-                )}
-              />
-            </View>
-            {errors.amount && <Text style={styles.errorText}>{errors.amount.message}</Text>}
+            <Controller
+              control={control}
+              name="amount"
+              rules={{ 
+                required: 'Enter a valid amount',
+                validate: (value) => {
+                  const num = parseFloat(value);
+                  if (isNaN(num) || !Number.isFinite(num) || num <= 0) return 'Enter a valid amount';
+                  if (num > 10000000) return 'Amount is too large';
+                  return true;
+                }
+              }}
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <AmountInput
+                  value={value}
+                  onChange={onChange}
+                  error={error?.message}
+                  autoFocus={true}
+                />
+              )}
+            />
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.inputGroup}>
@@ -296,7 +291,7 @@ export function AddTransactionModal({ visible, onClose }: Props) {
           <Animated.View entering={FadeInDown.delay(500).springify()} style={styles.submitContainer}>
             <SubmitButton 
               onPress={handleSubmit(onSubmit)}
-              disabled={false}
+              disabled={!isValid || !watch('amount')}
               title={`Add ${transactionType === 'income' ? 'Income' : 'Expense'}`}
               themeColors={themeColors}
               isIncome={transactionType === 'income'}
