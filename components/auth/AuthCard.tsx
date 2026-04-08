@@ -6,6 +6,7 @@ import Animated, { FadeInUp, FadeOutUp, LinearTransition } from 'react-native-re
 import { useAuthStore } from '../../store/authStore';
 
 import { useThemeColors } from '../../constants/Colors';
+import { simulateNetwork } from '../../utils/network';
 import { Button } from '../ui/Button';
 import { ErrorBanner } from '../ui/ErrorBanner';
 import { Input } from '../ui/Input';
@@ -30,11 +31,13 @@ export function AuthCard() {
     });
 
     const onSubmit = async (data: any) => {
+        if (isLoading) return;
         Keyboard.dismiss();
         setGlobalError('');
         setIsLoading(true);
 
         try {
+            await simulateNetwork(800);
             if (activeTab === 'signin') {
                 await login(data.email, data.password);
             } else {
@@ -85,6 +88,8 @@ export function AuthCard() {
                                     onChangeText={onChange}
                                     value={value}
                                     error={errors.name?.message as string}
+                                    editable={!isLoading}
+                                    containerStyle={{ opacity: isLoading ? 0.6 : 1 }}
                                 />
                             )}
                         />
@@ -109,6 +114,8 @@ export function AuthCard() {
                                 onChangeText={onChange}
                                 value={value}
                                 error={errors.email?.message as string}
+                                editable={!isLoading}
+                                containerStyle={{ opacity: isLoading ? 0.6 : 1 }}
                             />
                         )}
                     />
@@ -131,6 +138,8 @@ export function AuthCard() {
                                 onChangeText={onChange}
                                 value={value}
                                 error={errors.password?.message as string}
+                                editable={!isLoading}
+                                containerStyle={{ opacity: isLoading ? 0.6 : 1 }}
                             />
                         )}
                     />
@@ -154,6 +163,8 @@ export function AuthCard() {
                                     onChangeText={onChange}
                                     value={value}
                                     error={errors.confirmPassword?.message as string}
+                                    editable={!isLoading}
+                                    containerStyle={{ opacity: isLoading ? 0.6 : 1 }}
                                 />
                             )}
                         />
@@ -162,9 +173,10 @@ export function AuthCard() {
 
                 <Animated.View layout={LinearTransition.springify().stiffness(300)}>
                     <Button
-                        title={activeTab === 'signin' ? "Sign In" : "Create Account"}
+                        title={isLoading ? (activeTab === 'signin' ? "Signing in..." : "Creating account...") : (activeTab === 'signin' ? "Sign In" : "Create Account")}
                         onPress={handleSubmit(onSubmit)}
                         isLoading={isLoading}
+                        disabled={isLoading}
                     />
                 </Animated.View>
             </Animated.View>

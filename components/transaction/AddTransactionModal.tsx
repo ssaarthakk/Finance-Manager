@@ -3,6 +3,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
+  ActivityIndicator,
   Modal,
   Platform,
   Pressable,
@@ -20,6 +21,7 @@ import { useThemeColors } from '../../constants/Colors';
 import { useAuthStore } from '../../store/authStore';
 import { useFinanceStore } from '../../store/financeStore';
 import { useThemeStore } from '../../store/themeStore';
+import { simulateNetwork } from '../../utils/network';
 import { TransactionTypeToggle } from './TransactionTypeToggle';
 
 import { AmountInput } from '../ui/AmountInput';
@@ -32,13 +34,15 @@ function SubmitButton({
   disabled, 
   title, 
   themeColors, 
-  isIncome 
+  isIncome,
+  isSubmitting
 }: { 
   onPress: () => void, 
   disabled: boolean, 
   title: string, 
   themeColors: any,
-  isIncome: boolean
+  isIncome: boolean,
+  isSubmitting?: boolean
 }) {
   const scale = useSharedValue(1);
 
@@ -57,12 +61,16 @@ function SubmitButton({
       style={[
         styles.submitButton, 
         { backgroundColor: disabled ? themeColors.border : (isIncome ? '#10B981' : '#EF4444') },
-        animatedStyle
+        animatedStyle,
+        isSubmitting && { opacity: 0.8 }
       ]}
     >
-      <Text style={styles.submitButtonText}>
-        {title}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {isSubmitting && <ActivityIndicator color="#FFFFFF" style={{ marginRight: 8 }} />}
+        <Text style={styles.submitButtonText}>
+          {title}
+        </Text>
+      </View>
     </AnimatedPressable>
   );
 }
@@ -103,6 +111,7 @@ export function AddTransactionModal({ visible, onClose }: Props) {
   const selectedDate = watch('date');
 
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -127,18 +136,26 @@ export function AddTransactionModal({ visible, onClose }: Props) {
     }
   }, [visible, transactionType, transactions.length]); // Don't include availableCategories directly to prevent looping
 
-  const onSubmit = (data: FormData) => {
-    const numericAmount = parseFloat(data.amount);
-    
-    addTransaction({
-      amount: numericAmount,
-      categoryId: data.categoryId,
-      date: data.date.toISOString(),
-      note: data.note,
-      type: data.type,
-    });
+  const onSubmit = async (data: FormData) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    handleClose();
+    try {
+      await simulateNetwork(600);
+      const numericAmount = parseFloat(data.amount);
+      
+      addTransaction({
+        amount: numericAmount,
+        categoryId: data.categoryId,
+        date: data.date.toISOString(),
+        note: data.note,
+        type: data.type,
+      });
+
+      handleClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -291,10 +308,11 @@ export function AddTransactionModal({ visible, onClose }: Props) {
           <Animated.View entering={FadeInDown.delay(500).springify()} style={styles.submitContainer}>
             <SubmitButton 
               onPress={handleSubmit(onSubmit)}
-              disabled={!isValid || !watch('amount')}
-              title={`Add ${transactionType === 'income' ? 'Income' : 'Expense'}`}
+              disabled={!isValid || !watch('amount') || isSubmitting}
+              title={isSubmitting ? (transactionType === 'income' ? 'Adding Income...' : 'Adding Expense...') : `Add ${transactionType === 'income' ? 'Income' : 'Expense'}`}
               themeColors={themeColors}
               isIncome={transactionType === 'income'}
+              isSubmitting={isSubmitting}
             />
           </Animated.View>
 

@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { Colors, useThemeColors } from '../../constants/Colors';
 import { useThemeStore } from '../../store/themeStore';
@@ -12,11 +12,12 @@ interface UserInfoCardProps {
     onNameChange: (n: string) => void;
     onEmailChange: (e: string) => void;
     onSave?: () => void;
+    isSubmitting?: boolean;
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-function SaveButton({ onSave }: { onSave?: () => void }) {
+function SaveButton({ onSave, isSubmitting }: { onSave?: () => void; isSubmitting?: boolean }) {
     const scale = useSharedValue(1);
 
     const animatedStyle = useAnimatedStyle(() => ({
@@ -25,17 +26,21 @@ function SaveButton({ onSave }: { onSave?: () => void }) {
 
     return (
         <AnimatedPressable 
-            style={[styles.saveButton, animatedStyle]} 
-            onPress={onSave}
-            onPressIn={() => scale.value = withSpring(0.95)}
+            style={[styles.saveButton, animatedStyle, isSubmitting && { opacity: 0.7 }]} 
+            onPress={isSubmitting ? undefined : onSave}
+            onPressIn={() => { if (!isSubmitting) scale.value = withSpring(0.95); }}
             onPressOut={() => scale.value = withSpring(1)}
+            disabled={isSubmitting}
         >
-            <Text style={styles.saveButtonText}>Save Details</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {isSubmitting && <ActivityIndicator color={Colors.black} style={{ marginRight: 8 }} />}
+                <Text style={styles.saveButtonText}>{isSubmitting ? 'Saving changes...' : 'Save Details'}</Text>
+            </View>
         </AnimatedPressable>
     );
 }
 
-export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailChange, onSave }: UserInfoCardProps) {
+export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailChange, onSave, isSubmitting }: UserInfoCardProps) {
     const { theme } = useThemeStore();
     const themeColors = useThemeColors();
 
@@ -51,12 +56,13 @@ export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailCha
                 <Text style={[styles.label, { color: themeColors.textMuted }]}>Full Name</Text>
                 {isEditMode ? (
                     <TextInput 
-                        style={[styles.input, { color: themeColors.text, backgroundColor: theme === 'dark' ? '#222' : '#f3f4f6' }]} 
+                        style={[styles.input, { color: themeColors.text, backgroundColor: theme === 'dark' ? '#222' : '#f3f4f6' }, isSubmitting && { opacity: 0.6 }]} 
                         value={name} 
                         onChangeText={onNameChange} 
                         placeholder="Enter full name"
                         autoCapitalize="words"
                         placeholderTextColor={themeColors.textMuted}
+                        editable={!isSubmitting}
                     />
                 ) : (
                     <Text style={[styles.value, { color: themeColors.text }]}>{name || 'Not provided'}</Text>
@@ -67,7 +73,7 @@ export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailCha
                 <Text style={[styles.label, { color: themeColors.textMuted }]}>Email Address</Text>
                 {isEditMode ? (
                     <TextInput 
-                        style={[styles.input, { color: themeColors.text, backgroundColor: theme === 'dark' ? '#222' : '#f3f4f6' }]} 
+                        style={[styles.input, { color: themeColors.text, backgroundColor: theme === 'dark' ? '#222' : '#f3f4f6' }, isSubmitting && { opacity: 0.6 }]} 
                         value={email} 
                         onChangeText={onEmailChange} 
                         keyboardType="email-address"
@@ -75,6 +81,7 @@ export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailCha
                         autoCorrect={false}
                         placeholder="Enter email address"
                         placeholderTextColor={themeColors.textMuted}
+                        editable={!isSubmitting}
                     />
                 ) : (
                     <Text style={[styles.value, { color: themeColors.text }]}>{email}</Text>
@@ -82,7 +89,7 @@ export function UserInfoCard({ isEditMode, name, email, onNameChange, onEmailCha
             </View>
 
             {isEditMode && (
-                <SaveButton onSave={onSave} />
+                <SaveButton onSave={onSave} isSubmitting={isSubmitting} />
             )}
         </Animated.View>
     );

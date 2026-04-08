@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, useThemeColors } from '../constants/Colors';
 import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
+import { simulateNetwork } from '../utils/network';
 
 import { SegmentedToggle } from '../components/profile/SegmentedToggle';
 import { SettingsAndLogout } from '../components/profile/SettingsAndLogout';
@@ -17,6 +18,8 @@ export default function ProfileScreen() {
   const themeColors = useThemeColors();
 
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [name, setName] = useState(currentUser?.name || '');
   const [email, setEmail] = useState(currentUser?.email || '');
 
@@ -28,6 +31,7 @@ export default function ProfileScreen() {
   }, [currentUser, isEditMode]);
 
   const handleToggleMode = (mode: boolean) => {
+    if (isSubmitting) return;
     if (!mode && isEditMode) {
       setName(currentUser?.name || '');
       setEmail(currentUser?.email || '');
@@ -38,9 +42,27 @@ export default function ProfileScreen() {
     setIsEditMode(mode);
   };
 
-  const handleSave = () => {
-    updateProfile(name, email);
-    setIsEditMode(false);
+  const handleSave = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await simulateNetwork(600);
+      updateProfile(name, email);
+      setIsEditMode(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await simulateNetwork(600);
+      logout();
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -74,10 +96,12 @@ export default function ProfileScreen() {
           onNameChange={setName}
           onEmailChange={setEmail}
           onSave={handleSave}
+          isSubmitting={isSubmitting}
         />
 
         <SettingsAndLogout
-          onLogout={logout}
+          onLogout={handleLogout}
+          isLoggingOut={isLoggingOut}
         />
 
       </KeyboardAwareScrollView>

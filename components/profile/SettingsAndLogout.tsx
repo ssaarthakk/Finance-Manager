@@ -1,7 +1,7 @@
 import Feather from '@expo/vector-icons/Feather';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import Animated, { FadeInDown, useSharedValue, withSpring } from 'react-native-reanimated';
 import { Colors, useThemeColors } from '../../constants/Colors';
 import { useThemeStore } from '../../store/themeStore';
@@ -10,9 +10,10 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface SettingsAndLogoutProps {
     onLogout: () => void;
+    isLoggingOut?: boolean;
 }
 
-export function SettingsAndLogout({ onLogout }: SettingsAndLogoutProps) {
+export function SettingsAndLogout({ onLogout, isLoggingOut }: SettingsAndLogoutProps) {
     const logoutScale = useSharedValue(1);
     const { theme, toggleTheme } = useThemeStore();
     const themeColors = useThemeColors();
@@ -44,13 +45,18 @@ export function SettingsAndLogout({ onLogout }: SettingsAndLogoutProps) {
 
             <Animated.View entering={FadeInDown.delay(600).springify()} style={styles.logoutContainer}>
                 <AnimatedPressable
-                    onPressIn={() => { logoutScale.value = withSpring(0.95); }}
+                    disabled={isLoggingOut}
+                    onPressIn={() => { if (!isLoggingOut) logoutScale.value = withSpring(0.95); }}
                     onPressOut={() => { logoutScale.value = withSpring(1); }}
-                    onPress={onLogout}
-                    style={[styles.logoutButton, { transform: [{ scale: logoutScale }] }]}
+                    onPress={isLoggingOut ? undefined : onLogout}
+                    style={[styles.logoutButton, { transform: [{ scale: logoutScale }] }, isLoggingOut && { opacity: 0.7 }]}
                 >
-                    <Feather name="log-out" size={20} color="#f87171" style={{ marginRight: 8 }} />
-                    <Text style={styles.logoutText}>Log Out</Text>
+                    {isLoggingOut ? (
+                        <ActivityIndicator color="#f87171" style={{ marginRight: 8 }} />
+                    ) : (
+                        <Feather name="log-out" size={20} color="#f87171" style={{ marginRight: 8 }} />
+                    )}
+                    <Text style={styles.logoutText}>{isLoggingOut ? 'Logging Out...' : 'Log Out'}</Text>
                 </AnimatedPressable>
             </Animated.View>
         </>
