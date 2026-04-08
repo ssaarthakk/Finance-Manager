@@ -1,5 +1,5 @@
-import { useIsFocused } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
+import { useIsFocused } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -52,14 +52,17 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
     }));
 
     return (
-        <AnimatedPressable 
+        <Animated.View
             key={isFocused ? 'focused' : 'unfocused'}
-            entering={isFocused ? FadeInUp.springify().mass(0.5).delay(100) : undefined} 
-            style={[styles.container, animatedStyle]}
-            onPressIn={() => scale.value = withSpring(0.96)}
-            onPressOut={() => scale.value = withSpring(1)}
+            entering={isFocused ? FadeInUp.springify().mass(0.5).delay(100) : undefined}
+            style={styles.wrapper}
         >
-            <LinearGradient
+            <AnimatedPressable 
+                style={[styles.container, animatedStyle]}
+                onPressIn={() => scale.value = withSpring(0.96)}
+                onPressOut={() => scale.value = withSpring(1)}
+            >
+                <LinearGradient
                 colors={[themeColors.chartPeach, themeColors.chartMint]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -92,15 +95,19 @@ export function BalanceCard({ balance, income, expense }: BalanceCardProps) {
                     </View>
                 </View>
             </LinearGradient>
-        </AnimatedPressable>
+            </AnimatedPressable>
+        </Animated.View>
     );
 }
 
 const styles = StyleSheet.create({
+    wrapper: {
+        width: '100%',
+        marginBottom: 24,
+    },
     container: {
         width: '100%',
         borderRadius: 24,
-        marginBottom: 24,
         shadowColor: Colors.chartMint,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.3,
